@@ -8,6 +8,7 @@ using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using Aba.Silverlight.WP8.OsMo.Resources;
 using Aba.Silverlight.WP8.OsMo.ViewModels;
+using Windows.Devices.Geolocation;
 
 namespace Aba.Silverlight.WP8.OsMo
 {
@@ -15,10 +16,13 @@ namespace Aba.Silverlight.WP8.OsMo
 	{
 
 		private static MainViewModel _ViewModel = null;
-		public static MainViewModel ViewModel
-		{
-			get { if (_ViewModel == null) { _ViewModel = new MainViewModel(); } return _ViewModel; }
-		}
+		public static MainViewModel ViewModel { get { if (_ViewModel == null) { _ViewModel = new MainViewModel(); } return _ViewModel; } }
+
+		private static Messenger _Messenger;
+		public static Messenger Messenger { get { if (_Messenger == null) _Messenger = new Messenger(); return _Messenger; } }
+
+		public static Geolocator Geolocator { get; set; }
+		public static bool RunningInBackground { get; set; }
 
 		public static PhoneApplicationFrame RootFrame { get; private set; }
 
@@ -37,26 +41,29 @@ namespace Aba.Silverlight.WP8.OsMo
 
 		private void Application_Launching(object sender, LaunchingEventArgs e)
 		{
+			Messenger.Connect();
 		}
 
 		private void Application_Activated(object sender, ActivatedEventArgs e)
 		{
-			App.ViewModel.IsServiceStarted = MainViewModel.Geolocator != null;
-			MainViewModel.RunningInBackground = false;
+			Messenger.Connect();
+			App.ViewModel.IsServiceStarted = App.Geolocator != null;
+			App.RunningInBackground = false;
 		}
 
 		private void Application_Deactivated(object sender, DeactivatedEventArgs e)
 		{
+			Messenger.Disconnect();
 		}
 
 		private void Application_Closing(object sender, ClosingEventArgs e)
 		{
-
+			Messenger.Disconnect();
 		}
 
 		private void Application_RunningInBackground(object sender, RunningInBackgroundEventArgs e)
 		{
-			MainViewModel.RunningInBackground = true;
+			App.RunningInBackground = true;
 		}
 
 		// Code to execute if a navigation fails

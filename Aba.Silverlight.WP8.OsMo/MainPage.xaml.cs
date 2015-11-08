@@ -33,7 +33,7 @@ namespace Aba.Silverlight.WP8.OsMo
 			App.ViewModel.IsServiceStarted = !App.ViewModel.IsServiceStarted;
 			if (App.ViewModel.IsServiceStarted)
 			{
-				MainViewModel.Geolocator = new Geolocator
+				App.Geolocator = new Geolocator
 				{
 					DesiredAccuracy = PositionAccuracy.High,
 					DesiredAccuracyInMeters = 5,
@@ -41,18 +41,18 @@ namespace Aba.Silverlight.WP8.OsMo
 					ReportInterval = 1000
 				};
 
-				MainViewModel.Geolocator.PositionChanged += Geolocator_PositionChanged;
+				App.Geolocator.PositionChanged += Geolocator_PositionChanged;
 			}
 			else
 			{
-				MainViewModel.Geolocator.PositionChanged -= Geolocator_PositionChanged;
-				MainViewModel.Geolocator = null;
+				App.Geolocator.PositionChanged -= Geolocator_PositionChanged;
+				App.Geolocator = null;
 			}
 		}
 
 		void Geolocator_PositionChanged(Geolocator sender, PositionChangedEventArgs args)
 		{
-			if (MainViewModel.RunningInBackground)
+			if (App.RunningInBackground)
 			{
 
 			}

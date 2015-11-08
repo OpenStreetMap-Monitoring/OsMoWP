@@ -88,6 +88,24 @@ namespace Aba.Silverlight.WP8.OsMo.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to U33_Kqrt52pN.
+        /// </summary>
+        public static string MessengerApplicationId {
+            get {
+                return ResourceManager.GetString("MessengerApplicationId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://api.osmo.mobi.
+        /// </summary>
+        public static string MessengerHost {
+            get {
+                return ResourceManager.GetString("MessengerHost", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to LeftToRight.
         /// </summary>
         public static string ResourceFlowDirection {

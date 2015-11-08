@@ -14,7 +14,7 @@
     shell:SystemTray.IsVisible="True">
 	<Grid x:Name="LayoutRoot" Background="Transparent">
 		<phone:Pivot Title="{Binding Path=LocalizedResources.ApplicationTitle, Source={StaticResource LocalizedStrings}}">
-			
+
 			<!-- Tracking Tab-->
 			<phone:PivotItem Header="{Binding Path=LocalizedResources.TrackingTabTitle, Source={StaticResource LocalizedStrings}}">
 				<StackPanel>
@@ -24,6 +24,8 @@
 					</StackPanel>
 					<TextBlock Text="Service started" Visibility="{Binding IsServiceStarted,Converter={StaticResource Visible}}" />
 					<TextBlock Text="Service stopped" Visibility="{Binding IsServiceStarted,Converter={StaticResource Visible},ConverterParameter=Inverse}" />
+					<TextBlock Text="Message of the day:" Margin="0 5" />
+					<TextBlock Text="{Binding MessageOfTheDay}" TextWrapping="Wrap" />
 					<TextBlock Text="DeviceId:" Margin="0 5" />
 					<TextBlock Text="{Binding DeviceId}" TextWrapping="Wrap" />
 					<TextBlock Text="Coordinates:"  Margin="0 5" />

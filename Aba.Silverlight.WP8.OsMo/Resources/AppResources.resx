@@ -146,4 +146,10 @@
   <data name="TrackingTabTitle" xml:space="preserve">
     <value>Tracking</value>
   </data>
+  <data name="MessengerApplicationId" xml:space="preserve">
+    <value>U33_Kqrt52pN</value>
+  </data>
+  <data name="MessengerHost" xml:space="preserve">
+    <value>https://api.osmo.mobi</value>
+  </data>
 </root>
