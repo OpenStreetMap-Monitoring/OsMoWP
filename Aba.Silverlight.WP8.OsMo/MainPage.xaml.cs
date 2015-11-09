@@ -36,32 +36,28 @@ namespace Aba.Silverlight.WP8.OsMo
 				App.Geolocator = new Geolocator
 				{
 					DesiredAccuracy = PositionAccuracy.High,
-					DesiredAccuracyInMeters = 5,
+					DesiredAccuracyInMeters = 50,
 					MovementThreshold = 5,
 					ReportInterval = 1000
 				};
-
+				App.Messenger.CTo();
 				App.Geolocator.PositionChanged += Geolocator_PositionChanged;
 			}
 			else
 			{
 				App.Geolocator.PositionChanged -= Geolocator_PositionChanged;
 				App.Geolocator = null;
+				App.Messenger.CTc();
 			}
 		}
 
+		//TODO: move to app.cs
 		void Geolocator_PositionChanged(Geolocator sender, PositionChangedEventArgs args)
 		{
-			if (App.RunningInBackground)
+			App.Messenger.CT(args.Position.Coordinate);
+			if (!App.RunningInBackground)
 			{
-
-			}
-			else
-			{
-				Dispatcher.BeginInvoke(() =>
-				{
-					App.ViewModel.Coordinate = args.Position.Coordinate;
-				});
+				Dispatcher.BeginInvoke(() => { App.ViewModel.Coordinate = args.Position.Coordinate; });
 			}
 		}
 	}

@@ -1,46 +1,113 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Windows.Devices.Geolocation;
 
 namespace Aba.Silverlight.WP8.OsMo
 {
 	public partial class Messenger
 	{
+
 		private void ProcessReply(string line)
 		{
-			if (Regex.IsMatch(line, "[A-Z]+|.*"))
+			var pattern = "^([A-Z]+)([:][A-Z0-9]+)?(|.+)?$";
+			var match = Regex.Match(line.Trim(), pattern);
+			if (match.Success)
 			{
-				var pair = line.Split(new char[] { '|' }, 2);
-				switch (pair[0])
+				var command = match.Groups[1].Value;
+				var parameter = string.IsNullOrEmpty(match.Groups[2].Value) ? null : match.Groups[2].Value.Substring(1);
+				var addict = string.IsNullOrWhiteSpace(match.Groups[3].Value) ? null : match.Groups[3].Value.Substring(1).Trim();
+
+				switch (command)
 				{
 					case "INIT":
 						CMd();
 						break;
+					case "RC":
+						break;
 					case "MD":
-						App.RootFrame.Dispatcher.BeginInvoke(() => { App.ViewModel.MessageOfTheDay = pair[1].Trim(); });
+						Do(() => { App.ViewModel.MessageOfTheDay = addict; });
+						break;
+					case "TO":
+						break;
+					case "T":
+						break;
+					case "TC":
 						break;
 					default:
+						if (Debugger.IsAttached) Debugger.Break();
 						break;
 				}
 			}
+		}
+
+		private void Do(Action a)
+		{
+			if (App.RunningInBackground)
+			{
+				a();
+			}
 			else
 			{
-				// wtf?
+				App.RootFrame.Dispatcher.BeginInvoke(a);
 			}
 		}
 
+		#region Tcp api v2 commands
+
+		/// <summary>
+		/// Inits tcp connection
+		/// </summary>
 		private void CInit()
 		{
 			Send("INIT", Token);
 		}
 
-		private void CMd()
+		/// <summary>
+		/// Gets message of the day
+		/// </summary>
+		public void CMd()
 		{
 			Send("MD");
 		}
 
+		/// <summary>
+		/// Opens tracking session
+		/// </summary>
+		public void CTo()
+		{
+			Send("TO");
+		}
+
+		/// <summary>
+		/// Closes tracking session
+		/// </summary>
+		public void CTc()
+		{
+			Send("TC");
+		}
+
+		/// <summary>
+		/// Send tracking data
+		/// </summary>
+		/// <param name="coord">Gps point</param>
+		public void CT(Geocoordinate coord)
+		{
+			if (coord == null) return;
+			var addict = new StringBuilder();
+			var format = CultureInfo.InvariantCulture.NumberFormat;
+			addict.AppendFormat("L{0}:{1}", coord.Latitude.ToString(format), coord.Longitude.ToString(format));
+			addict.AppendFormat("S{0}A{1}", coord.Speed.GetValueOrDefault().ToString(format), Convert.ToInt32(coord.Altitude.GetValueOrDefault()).ToString(format));
+			addict.AppendFormat("H{0}C{1}", coord.Accuracy.ToString(format), coord.Heading.GetValueOrDefault().ToString(format));
+			addict.AppendFormat("T{0}", Convert.ToInt32(coord.Timestamp.UtcDateTime.Subtract(new DateTime(1970, 1, 1)).TotalSeconds).ToString(format));
+			Send("T", addict.ToString());
+		}
+
+		#endregion
 	}
 }

@@ -18,7 +18,7 @@
 			<!-- Tracking Tab-->
 			<phone:PivotItem Header="{Binding Path=LocalizedResources.TrackingTabTitle, Source={StaticResource LocalizedStrings}}">
 				<StackPanel>
-					<StackPanel Orientation="Horizontal">
+					<StackPanel Orientation="Horizontal" Visibility="{Binding MessageOfTheDay,Converter={StaticResource Visible}}">
 						<Button Content="Start" IsEnabled="{Binding IsServiceStarted,Converter={StaticResource Bool}}" Click="ServiceButton_Click" />
 						<Button Content="Stop" IsEnabled="{Binding IsServiceStarted,Converter={StaticResource Bool},ConverterParameter=Inverse}" Click="ServiceButton_Click" />
 					</StackPanel>
