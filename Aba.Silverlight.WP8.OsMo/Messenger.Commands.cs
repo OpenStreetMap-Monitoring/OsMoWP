@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Aba.Silverlight.WP8.OsMo.Models;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -25,13 +26,21 @@ namespace Aba.Silverlight.WP8.OsMo
 
 				switch (command)
 				{
+					case "GROUP":
+						var t = addict;
+						break;
 					case "INIT":
 						CMd();
 						break;
-					case "RC":
-						break;
 					case "MD":
 						Do(() => { App.ViewModel.MessageOfTheDay = addict; });
+						break;
+					case "P":
+						break;
+					case "PP":
+						CP();
+						break;
+					case "RC":
 						break;
 					case "TO":
 						break;
@@ -60,12 +69,17 @@ namespace Aba.Silverlight.WP8.OsMo
 
 		#region Tcp api v2 commands
 
+		public void CGroup()
+		{
+			Send(new Message("GROUP"));
+		}
+
 		/// <summary>
 		/// Inits tcp connection
 		/// </summary>
 		private void CInit()
 		{
-			Send("INIT", Token);
+			Send(new Message("INIT", Token));
 		}
 
 		/// <summary>
@@ -73,7 +87,15 @@ namespace Aba.Silverlight.WP8.OsMo
 		/// </summary>
 		public void CMd()
 		{
-			Send("MD");
+			Send(new Message("MD"));
+		}
+
+		/// <summary>
+		/// Send pong
+		/// </summary>
+		public void CP()
+		{
+			Send(new Message("P"));
 		}
 
 		/// <summary>
@@ -81,7 +103,7 @@ namespace Aba.Silverlight.WP8.OsMo
 		/// </summary>
 		public void CTo()
 		{
-			Send("TO");
+			Send(new Message("TO"));
 		}
 
 		/// <summary>
@@ -89,7 +111,7 @@ namespace Aba.Silverlight.WP8.OsMo
 		/// </summary>
 		public void CTc()
 		{
-			Send("TC");
+			Send(new Message("TC"));
 		}
 
 		/// <summary>
@@ -105,7 +127,7 @@ namespace Aba.Silverlight.WP8.OsMo
 			addict.AppendFormat("S{0}A{1}", coord.Speed.GetValueOrDefault().ToString(format), Convert.ToInt32(coord.Altitude.GetValueOrDefault()).ToString(format));
 			addict.AppendFormat("H{0}C{1}", coord.Accuracy.ToString(format), coord.Heading.GetValueOrDefault().ToString(format));
 			addict.AppendFormat("T{0}", Convert.ToInt32(coord.Timestamp.UtcDateTime.Subtract(new DateTime(1970, 1, 1)).TotalSeconds).ToString(format));
-			Send("T", addict.ToString());
+			Send(new Message("T", addict.ToString()));
 		}
 
 		#endregion

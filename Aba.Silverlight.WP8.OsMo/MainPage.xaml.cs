@@ -33,31 +33,20 @@ namespace Aba.Silverlight.WP8.OsMo
 			App.ViewModel.IsServiceStarted = !App.ViewModel.IsServiceStarted;
 			if (App.ViewModel.IsServiceStarted)
 			{
-				App.Geolocator = new Geolocator
-				{
-					DesiredAccuracy = PositionAccuracy.High,
-					DesiredAccuracyInMeters = 50,
-					MovementThreshold = 5,
-					ReportInterval = 1000
-				};
-				App.Messenger.CTo();
-				App.Geolocator.PositionChanged += Geolocator_PositionChanged;
+				(App.Current as App).StartTracking();
 			}
 			else
 			{
-				App.Geolocator.PositionChanged -= Geolocator_PositionChanged;
-				App.Geolocator = null;
-				App.Messenger.CTc();
+				(App.Current as App).StopTracking();
 			}
 		}
 
-		//TODO: move to app.cs
-		void Geolocator_PositionChanged(Geolocator sender, PositionChangedEventArgs args)
+		private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			App.Messenger.CT(args.Position.Coordinate);
-			if (!App.RunningInBackground)
+			var pivot = sender as Pivot;
+			if (pivot.SelectedIndex == 1 && App.ViewModel.GroupsModel.Groups == null)
 			{
-				Dispatcher.BeginInvoke(() => { App.ViewModel.Coordinate = args.Position.Coordinate; });
+				App.Messenger.CGroup();
 			}
 		}
 	}

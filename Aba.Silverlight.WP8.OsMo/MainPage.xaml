@@ -13,7 +13,8 @@
     SupportedOrientations="Portrait"  Orientation="Portrait"
     shell:SystemTray.IsVisible="True">
 	<Grid x:Name="LayoutRoot" Background="Transparent">
-		<phone:Pivot Title="{Binding Path=LocalizedResources.ApplicationTitle, Source={StaticResource LocalizedStrings}}">
+		<phone:Pivot Title="{Binding Path=LocalizedResources.ApplicationTitle, Source={StaticResource LocalizedStrings}}"
+								 SelectionChanged="Pivot_SelectionChanged">
 
 			<!-- Tracking Tab-->
 			<phone:PivotItem Header="{Binding Path=LocalizedResources.TrackingTabTitle, Source={StaticResource LocalizedStrings}}">
@@ -32,6 +33,17 @@
 					<TextBlock Text="{Binding Coordinate,Converter={StaticResource Coordinate}}" />
 					<TextBlock Text="" />
 				</StackPanel>
+			</phone:PivotItem>
+
+			<!-- Groups Tab-->
+			<phone:PivotItem Header="Groups" DataContext="{Binding GroupsModel}">
+				<ListBox ItemsSource="{Binding Groups}">
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
 			</phone:PivotItem>
 
 			<!-- Settings Tab-->

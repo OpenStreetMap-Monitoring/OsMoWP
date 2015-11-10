@@ -39,6 +39,26 @@ namespace Aba.Silverlight.WP8.OsMo
 			}
 		}
 
+		public void StartTracking()
+		{
+			App.Geolocator = new Geolocator
+			{
+				DesiredAccuracy = PositionAccuracy.High,
+				DesiredAccuracyInMeters = 50,
+				MovementThreshold = 5,
+				ReportInterval = 1000
+			};
+			App.Messenger.CTo();
+			App.Geolocator.PositionChanged += Geolocator_PositionChanged;
+		}
+
+		public void StopTracking()
+		{
+			App.Geolocator.PositionChanged -= Geolocator_PositionChanged;
+			App.Geolocator = null;
+			App.Messenger.CTc();
+		}
+
 		private void Application_Launching(object sender, LaunchingEventArgs e)
 		{
 			Messenger.Connect();
@@ -64,6 +84,15 @@ namespace Aba.Silverlight.WP8.OsMo
 		private void Application_RunningInBackground(object sender, RunningInBackgroundEventArgs e)
 		{
 			App.RunningInBackground = true;
+		}
+
+		private void Geolocator_PositionChanged(Geolocator sender, PositionChangedEventArgs args)
+		{
+			App.Messenger.CT(args.Position.Coordinate);
+			if (!App.RunningInBackground)
+			{
+				App.RootFrame.Dispatcher.BeginInvoke(() => { App.ViewModel.Coordinate = args.Position.Coordinate; });
+			}
 		}
 
 		// Code to execute if a navigation fails

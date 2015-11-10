@@ -1,4 +1,5 @@
-﻿using Aba.Silverlight.WP8.OsMo.Resources;
+﻿using Aba.Silverlight.WP8.OsMo.Models;
+using Aba.Silverlight.WP8.OsMo.Resources;
 using System;
 using System.Collections.Generic;
 using System.IO.IsolatedStorage;
@@ -127,18 +128,19 @@ namespace Aba.Silverlight.WP8.OsMo
 			client.DownloadStringAsync(new Uri(string.Format("{0}/new?app={1}&id={2}&imei={3}&platform={4}", ServiceHost, ApplicationId, DeviceId, 0, PlatformInfo)));
 		}
 
-		private void Send(string command, string addict = null, string parameter = null)
+		private void Send(Message message)
 		{
-			var line = new StringBuilder(command);
-			if (!string.IsNullOrEmpty(parameter))
+			//TODO: make reconnect and queue
+			var line = new StringBuilder(message.Command);
+			if (!string.IsNullOrEmpty(message.Parameter))
 			{
 				line.Append(':');
-				line.Append(parameter);
+				line.Append(message.Parameter);
 			}
-			if (!string.IsNullOrEmpty(addict))
+			if (!string.IsNullOrEmpty(message.Addict))
 			{
 				line.Append('|');
-				line.Append(addict);
+				line.Append(message.Addict);
 			}
 			line.Append('\n');
 			var args = new SocketAsyncEventArgs();
