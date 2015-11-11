@@ -1,13 +1,13 @@
 ﻿using Aba.Silverlight.WP8.OsMo.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Windows.Devices.Geolocation;
+using Group = Aba.Silverlight.WP8.OsMo.Models.Group;
 
 namespace Aba.Silverlight.WP8.OsMo
 {
@@ -16,7 +16,7 @@ namespace Aba.Silverlight.WP8.OsMo
 
 		private void ProcessReply(string line)
 		{
-			var pattern = "^([A-Z]+)([:][A-Z0-9]+)?(|.+)?$";
+			var pattern = "^([A-Z]+)([:][A-Z0-9_]+)?(|.+)?$";
 			var match = Regex.Match(line.Trim(), pattern);
 			if (match.Success)
 			{
@@ -26,8 +26,16 @@ namespace Aba.Silverlight.WP8.OsMo
 
 				switch (command)
 				{
+					case "GE":
+						CGroup();
+						break;
+					case "GP":
+						break;
 					case "GROUP":
-						var t = addict;
+						Do(() =>
+						{
+							App.ViewModel.GroupsModel.Groups = JsonConvert.DeserializeObject<IEnumerable<Group>>(addict);
+						});
 						break;
 					case "INIT":
 						CMd();
@@ -36,8 +44,10 @@ namespace Aba.Silverlight.WP8.OsMo
 						Do(() => { App.ViewModel.MessageOfTheDay = addict; });
 						break;
 					case "P":
+						if (Debugger.IsAttached) Debugger.Break();
 						break;
 					case "PP":
+						if (Debugger.IsAttached) Debugger.Break();
 						CP();
 						break;
 					case "RC":
@@ -72,6 +82,11 @@ namespace Aba.Silverlight.WP8.OsMo
 		public void CGroup()
 		{
 			Send(new Message("GROUP"));
+		}
+
+		public void CGe(string groupName, string displayName)
+		{
+			Send(new Message("GE", groupName, displayName));
 		}
 
 		/// <summary>

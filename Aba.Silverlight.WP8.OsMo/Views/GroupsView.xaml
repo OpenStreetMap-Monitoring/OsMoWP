@@ -1,0 +1,61 @@
+﻿<UserControl x:Class="Aba.Silverlight.WP8.OsMo.Views.GroupsView"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	mc:Ignorable="d"
+	FontFamily="{StaticResource PhoneFontFamilyNormal}"
+	FontSize="{StaticResource PhoneFontSizeNormal}"
+	Foreground="{StaticResource PhoneForegroundBrush}"
+	d:DesignHeight="680" d:DesignWidth="480">
+
+	<Grid x:Name="LayoutRoot">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<ListBox Grid.Row="0" ItemsSource="{Binding Groups}">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="*"/>
+						</Grid.ColumnDefinitions>
+						<CheckBox IsChecked="{Binding Active}" VerticalAlignment="Center" />
+						<StackPanel Grid.Column="1" Orientation="Vertical">
+							<TextBlock Text="{Binding Name}"/>
+							<TextBlock Text="{Binding Id}"/>
+						</StackPanel>
+					</Grid>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+		<Grid Grid.Row="1">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+			<TextBox x:Name="GroupName" Grid.Column="0" />
+			<TextBlock Visibility="{Binding ElementName=GroupName,Path=Text,Converter={StaticResource Visible},ConverterParameter=Inverse}"
+								 Text="Group Name"
+								 Grid.Column="0"
+								 IsHitTestVisible="False"
+								 HorizontalAlignment="Center"
+								 VerticalAlignment="Center"
+								 Foreground="Gray"
+								 />
+			<TextBox x:Name="DisplayName" Grid.Column="1" />
+			<TextBlock Visibility="{Binding ElementName=GroupName,Path=Text,Converter={StaticResource Visible},ConverterParameter=Inverse}"
+								 Text="Display Name"
+								 Grid.Column="1"
+								 IsHitTestVisible="False"
+								 HorizontalAlignment="Center"
+								 VerticalAlignment="Center"
+								 Foreground="Gray"
+								 />
+			<Button Grid.Column="2" Content="+" Click="AddButton_Click" />
+		</Grid>
+	</Grid>
+</UserControl>

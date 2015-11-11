@@ -22,5 +22,12 @@ namespace Aba.Silverlight.WP8.OsMo.Models
 			this.Command = command;
 			this.Addict = addict;
 		}
+
+		public Message(string command, string parameter, string addict)
+		{
+			this.Command = command;
+			this.Parameter = parameter;
+			this.Addict = addict;
+		}
 	}
 }

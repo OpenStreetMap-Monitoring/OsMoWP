@@ -1,14 +1,11 @@
 ﻿using Aba.Silverlight.WP8.OsMo.Models;
 using Aba.Silverlight.WP8.OsMo.Resources;
 using System;
-using System.Collections.Generic;
 using System.IO.IsolatedStorage;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Aba.Silverlight.WP8.OsMo
 {
