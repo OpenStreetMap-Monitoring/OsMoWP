@@ -133,8 +133,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Aba.Silverlight.WP8.OsMo_2015_11_12_12_55_07.sap" />
-    <None Include="Aba.Silverlight.WP8.OsMo_2015_11_12_12_56_56.sap" />
     <None Include="packages.config" />
     <None Include="Properties\AppManifest.xml" />
     <None Include="Properties\WMAppManifest.xml">
@@ -143,7 +141,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\osmo-app-icon-100.png" />
-    <Content Include="Assets\osmo-app-icon-300.png" />
+    <None Include="Assets\osmo-app-icon-300.png" />
+    <None Include="Assets\Screenshots\osmo-screenshot-wvga-1.png" />
+    <None Include="Assets\Screenshots\osmo-screenshot-wxga-1.png" />
+    <None Include="Assets\Screenshots\osmo-screenshot-720p-1.png" />
     <Content Include="Assets\Tiles\osmo-tile-medium-336.png" />
     <Content Include="Assets\Tiles\osmo-tile-small-159.png" />
   </ItemGroup>
