@@ -133,6 +133,8 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Aba.Silverlight.WP8.OsMo_2015_11_12_12_55_07.sap" />
+    <None Include="Aba.Silverlight.WP8.OsMo_2015_11_12_12_56_56.sap" />
     <None Include="packages.config" />
     <None Include="Properties\AppManifest.xml" />
     <None Include="Properties\WMAppManifest.xml">
@@ -140,24 +142,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\ApplicationIcon.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Tiles\FlipCycleTileLarge.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Tiles\FlipCycleTileMedium.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Tiles\FlipCycleTileSmall.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Tiles\IconicTileMediumLarge.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Tiles\IconicTileSmall.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Assets\osmo-app-icon-100.png" />
+    <Content Include="Assets\osmo-app-icon-300.png" />
+    <Content Include="Assets\Tiles\osmo-tile-medium-336.png" />
+    <Content Include="Assets\Tiles\osmo-tile-small-159.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\AppResources.resx">

@@ -30,6 +30,7 @@ namespace Aba.Silverlight.WP8.OsMo
 						CGroup();
 						break;
 					case "GP":
+						if (Debugger.IsAttached) Debugger.Break();
 						break;
 					case "GROUP":
 						Do(() =>

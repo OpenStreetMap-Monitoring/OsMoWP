@@ -1,4 +1,7 @@
-bin
-obj
+/Aba.Silverlight.WP8.OsMo/bin/
+/Aba.Silverlight.WP8.OsMo/obj/
+/packages/
+/Aba.Silverlight.WP8.OsMo.GpsTask/bin/
+/Aba.Silverlight.WP8.OsMo.GpsTask/obj/
 /Aba.Silverlight.WP8.OsMo.v12.suo
 /Aba.Silverlight.WP8.OsMo/*.user

@@ -51,7 +51,7 @@ namespace Aba.Silverlight.WP8.OsMo
 		void Transport_Connected(object sender, SocketAsyncEventArgs e)
 		{
 			e.Completed -= Transport_Connected;
-			e.Dispose();
+			if (e != null) e.Dispose();
 			CInit();
 			var receive = new SocketAsyncEventArgs();
 			receive.SetBuffer(new byte[16384], 0, 16384);
@@ -62,7 +62,7 @@ namespace Aba.Silverlight.WP8.OsMo
 		void Transport_Sent(object sender, SocketAsyncEventArgs e)
 		{
 			e.Completed -= Transport_Sent;
-			e.Dispose();
+			if (e != null) e.Dispose();
 		}
 
 		void Transport_Received(object sender, SocketAsyncEventArgs e)
@@ -70,7 +70,7 @@ namespace Aba.Silverlight.WP8.OsMo
 			if (e.SocketError != SocketError.Success) return;
 			ProcessReply(Encoding.UTF8.GetString(e.Buffer, 0, e.BytesTransferred));
 			e.Completed -= Transport_Received;
-			e.Dispose();
+			if (e != null) e.Dispose();
 			var args = new SocketAsyncEventArgs();
 			args.SetBuffer(new byte[16384], 0, 16384);
 			args.Completed += Transport_Received;
