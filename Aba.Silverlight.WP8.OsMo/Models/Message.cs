@@ -29,5 +29,22 @@ namespace Aba.Silverlight.WP8.OsMo.Models
 			this.Parameter = parameter;
 			this.Addict = addict;
 		}
+
+		public override string ToString()
+		{
+			var line = new StringBuilder(this.Command);
+			if (!string.IsNullOrEmpty(this.Parameter))
+			{
+				line.Append(':');
+				line.Append(this.Parameter);
+			}
+			if (!string.IsNullOrEmpty(this.Addict))
+			{
+				line.Append('|');
+				line.Append(this.Addict);
+			}
+			line.Append('\n');
+			return line.ToString();
+		}
 	}
 }

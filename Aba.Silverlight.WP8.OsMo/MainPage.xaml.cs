@@ -26,6 +26,7 @@ namespace Aba.Silverlight.WP8.OsMo
 
 		protected override void OnNavigatedTo(NavigationEventArgs e)
 		{
+			(App.Current as App).Page = this;
 		}
 
 		private void ServiceButton_Click(object sender, RoutedEventArgs e)
@@ -41,13 +42,25 @@ namespace Aba.Silverlight.WP8.OsMo
 			}
 		}
 
+		public void CheckDebugTab()
+		{
+			if (App.ViewModel.SettingsModel.DebugViewEnabled.Value && !Pivot.Items.Contains(DebugTab))
+			{
+				Pivot.Items.Add(DebugTab);
+			}
+			else if (!App.ViewModel.SettingsModel.DebugViewEnabled.Value && Pivot.Items.Contains(DebugTab))
+			{
+				Pivot.Items.Remove(DebugTab);
+			}
+		}
+
 		private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			var pivot = sender as Pivot;
-			if (pivot.SelectedIndex == 1 && App.ViewModel.GroupsModel.Groups == null)
+			if (Pivot.SelectedIndex == 1 && App.ViewModel.GroupsModel.Groups == null)
 			{
 				App.Messenger.CGroup();
 			}
+			CheckDebugTab();
 		}
 	}
 }

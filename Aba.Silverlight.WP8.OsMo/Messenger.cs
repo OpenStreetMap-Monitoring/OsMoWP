@@ -1,6 +1,7 @@
 ﻿using Aba.Silverlight.WP8.OsMo.Models;
 using Aba.Silverlight.WP8.OsMo.Resources;
 using System;
+using System.Collections.Generic;
 using System.IO.IsolatedStorage;
 using System.Net;
 using System.Net.Sockets;
@@ -23,6 +24,8 @@ namespace Aba.Silverlight.WP8.OsMo
 		private string PlatformInfo { get; set; }
 		private bool InProcess { get; set; }
 		private string Token { get; set; }
+		private int Serial { get; set; }
+		private Queue<Message> SendQueue { get; set; }
 
 		public bool Connected { get { return Transport.Connected; } }
 
@@ -30,14 +33,16 @@ namespace Aba.Silverlight.WP8.OsMo
 		{
 			ServiceHost = AppResources.MessengerHost;
 			ApplicationId = WebUtility.UrlEncode(Resources.AppResources.MessengerApplicationId);
-			DeviceId = WebUtility.UrlEncode(App.ViewModel.DeviceId);
+			DeviceId = WebUtility.UrlEncode(App.ViewModel.TrackerId);
 			PlatformInfo = WebUtility.UrlEncode(string.Format("{0} / {1}", Environment.OSVersion.Platform, Environment.OSVersion.Version));
 			Transport = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			SendQueue = new Queue<Message>();
 		}
 
 		public void Connect()
 		{
 			if (Transport.Connected || InProcess) return;
+			InProcess = true;
 			if (IsolatedStorageSettings.ApplicationSettings.Contains(SERVER_DEVICE_ID))
 			{
 				GetToken(() => { Init(); });
@@ -48,10 +53,86 @@ namespace Aba.Silverlight.WP8.OsMo
 			}
 		}
 
+		public void Disconnect()
+		{
+			InProcess = false;
+			Token = null;
+			if (Transport.Connected)
+			{
+				CBye();
+			}
+		}
+
+		private void GetToken(Action Success)
+		{
+			if (!IsolatedStorageSettings.ApplicationSettings.Contains(SERVER_DEVICE_ID)) return;
+			var client = new WebClient();
+			client.DownloadStringCompleted += (s, e) =>
+			{
+				if (e.Error == null)
+				{
+					Token = Regex.Match(e.Result, "[\"]token[\"][:][\"]([^\"]+)[\"]").Groups[1].Value;
+					var address = Regex.Match(e.Result, "[\"]address[\"][:][\"]([^\"]+)[\"]").Groups[1].Value.Split(':');
+					DataHost = address[0];
+					DataPort = Convert.ToInt32(address[1]);
+					Success();
+				}
+				else
+				{
+					Disconnect();
+				}
+			};
+			client.DownloadStringAsync(new Uri(string.Format("{0}/init?app={1}&device={2}&serial={3}", ServiceHost, ApplicationId
+				, IsolatedStorageSettings.ApplicationSettings[SERVER_DEVICE_ID], Serial++)));
+		}
+
+		private void RegisterDevice(Action Success)
+		{
+			if (IsolatedStorageSettings.ApplicationSettings.Contains(SERVER_DEVICE_ID)) return;
+			var client = new WebClient();
+			client.DownloadStringCompleted += (s, e) =>
+			{
+				if (e.Error == null)
+				{
+					var device = Regex.Match(e.Result, "[\"]device[\"][:][\"]([^\"]+)[\"]").Groups[1].Value;
+					lock (IsolatedStorageSettings.ApplicationSettings)
+					{
+						IsolatedStorageSettings.ApplicationSettings[SERVER_DEVICE_ID] = WebUtility.UrlEncode(device);
+						IsolatedStorageSettings.ApplicationSettings.Save();
+					}
+					Success();
+				}
+				else
+				{
+					Disconnect();
+				}
+			};
+			client.DownloadStringAsync(new Uri(string.Format("{0}/new?app={1}&id={2}&imei={3}&platform={4}", ServiceHost, ApplicationId, DeviceId, 0, PlatformInfo)));
+		}
+
+		private void Init()
+		{
+			if (string.IsNullOrEmpty(Token))
+			{
+				InProcess = false;
+				return;
+			}
+			var args = new SocketAsyncEventArgs();
+			args.RemoteEndPoint = new DnsEndPoint(DataHost, DataPort);
+			args.Completed += Transport_Connected;
+			Transport.ConnectAsync(args);
+		}
+
 		void Transport_Connected(object sender, SocketAsyncEventArgs e)
 		{
+			var error = e.SocketError;
 			e.Completed -= Transport_Connected;
-			if (e != null) e.Dispose();
+			e.Dispose();
+			if (error != SocketError.Success)
+			{
+				Disconnect();
+				return;
+			}
 			CInit();
 			var receive = new SocketAsyncEventArgs();
 			receive.SetBuffer(new byte[16384], 0, 16384);
@@ -61,90 +142,58 @@ namespace Aba.Silverlight.WP8.OsMo
 
 		void Transport_Sent(object sender, SocketAsyncEventArgs e)
 		{
+			var error = e.SocketError;
 			e.Completed -= Transport_Sent;
-			if (e != null) e.Dispose();
+			e.Dispose();
+			if (error != SocketError.Success)
+			{
+				Disconnect();
+			}
 		}
 
 		void Transport_Received(object sender, SocketAsyncEventArgs e)
 		{
-			if (e.SocketError != SocketError.Success) return;
+			if (e.SocketError != SocketError.Success)
+			{
+				e.Completed -= Transport_Received;
+				e.Dispose();
+				Disconnect();
+				return;
+			}
 			ProcessReply(Encoding.UTF8.GetString(e.Buffer, 0, e.BytesTransferred));
 			e.Completed -= Transport_Received;
-			if (e != null) e.Dispose();
+			e.Dispose();
+			if (!Transport.Connected)
+			{
+				InProcess = false;
+				return;
+			}
 			var args = new SocketAsyncEventArgs();
 			args.SetBuffer(new byte[16384], 0, 16384);
 			args.Completed += Transport_Received;
 			Transport.ReceiveAsync(args);
 		}
 
-		public void Disconnect()
-		{
-			Transport.Shutdown(SocketShutdown.Both);
-			Transport.Close();
-		}
-
-		private void GetToken(Action Success)
-		{
-			if (Transport.Connected || InProcess || !IsolatedStorageSettings.ApplicationSettings.Contains(SERVER_DEVICE_ID)) return;
-			InProcess = true;
-			var client = new WebClient();
-			client.DownloadStringCompleted += (s, e) =>
-			{
-				Token = Regex.Match(e.Result, "[\"]token[\"][:][\"]([^\"]+)[\"]").Groups[1].Value;
-				var address = Regex.Match(e.Result, "[\"]address[\"][:][\"]([^\"]+)[\"]").Groups[1].Value.Split(':');
-				DataHost = address[0];
-				DataPort = Convert.ToInt32(address[1]);
-				InProcess = false;
-				Success();
-			};
-			client.DownloadStringAsync(new Uri(string.Format("{0}/init?app={1}&device={2}", ServiceHost, ApplicationId, IsolatedStorageSettings.ApplicationSettings[SERVER_DEVICE_ID])));
-		}
-
-		private void Init()
-		{
-			if (Transport.Connected || InProcess || string.IsNullOrEmpty(Token)) return;
-			var args = new SocketAsyncEventArgs();
-			args.RemoteEndPoint = new DnsEndPoint(DataHost, DataPort);
-			args.Completed += Transport_Connected;
-			Transport.ConnectAsync(args);
-		}
-
-		private void RegisterDevice(Action Success)
-		{
-			if (Transport.Connected || InProcess || IsolatedStorageSettings.ApplicationSettings.Contains(SERVER_DEVICE_ID)) return;
-			InProcess = true;
-			var client = new WebClient();
-			client.DownloadStringCompleted += (s, e) =>
-			{
-				var device = Regex.Match(e.Result, "[\"]device[\"][:][\"]([^\"]+)[\"]").Groups[1].Value;
-				IsolatedStorageSettings.ApplicationSettings[SERVER_DEVICE_ID] = WebUtility.UrlEncode(device);
-				IsolatedStorageSettings.ApplicationSettings.Save();
-				InProcess = false;
-				Success();
-			};
-			client.DownloadStringAsync(new Uri(string.Format("{0}/new?app={1}&id={2}&imei={3}&platform={4}", ServiceHost, ApplicationId, DeviceId, 0, PlatformInfo)));
-		}
-
 		private void Send(Message message)
 		{
-			//TODO: make reconnect and queue
-			var line = new StringBuilder(message.Command);
-			if (!string.IsNullOrEmpty(message.Parameter))
+			if (!Transport.Connected)
 			{
-				line.Append(':');
-				line.Append(message.Parameter);
+				SendQueue.Enqueue(message);
+				Connect();
 			}
-			if (!string.IsNullOrEmpty(message.Addict))
+			else if (!InProcess || InProcess && message.Command == "INIT" || InProcess && message.Command == "MD")
 			{
-				line.Append('|');
-				line.Append(message.Addict);
+				var args = new SocketAsyncEventArgs();
+				var buffer = Encoding.UTF8.GetBytes(message.ToString());
+				args.SetBuffer(buffer, 0, buffer.Length);
+				args.Completed += Transport_Sent;
+				Transport.SendAsync(args);
+				App.ViewModel.AddDebugLog(string.Format(">{0}", message.ToString()));
 			}
-			line.Append('\n');
-			var args = new SocketAsyncEventArgs();
-			var buffer = Encoding.UTF8.GetBytes(line.ToString());
-			args.SetBuffer(buffer, 0, buffer.Length);
-			args.Completed += Transport_Sent;
-			Transport.SendAsync(args);
+			else
+			{
+				SendQueue.Enqueue(message);
+			}
 		}
 	}
 }

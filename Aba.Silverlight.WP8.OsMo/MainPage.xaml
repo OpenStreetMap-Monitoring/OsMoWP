@@ -15,7 +15,8 @@
 	shell:SystemTray.IsVisible="True">
 	<Grid x:Name="LayoutRoot" Background="Transparent">
 		<phone:Pivot Title="{Binding Path=LocalizedResources.ApplicationTitle, Source={StaticResource LocalizedStrings}}"
-								 SelectionChanged="Pivot_SelectionChanged">
+								 SelectionChanged="Pivot_SelectionChanged"
+								 x:Name="Pivot">
 
 			<!-- Tracking Tab-->
 			<phone:PivotItem Header="{Binding Path=LocalizedResources.TrackingTabTitle, Source={StaticResource LocalizedStrings}}">
@@ -28,11 +29,18 @@
 					<TextBlock Text="Service stopped" Visibility="{Binding IsServiceStarted,Converter={StaticResource Visible},ConverterParameter=Inverse}" />
 					<TextBlock Text="Message of the day:" Margin="0 5" />
 					<TextBlock Text="{Binding MessageOfTheDay}" TextWrapping="Wrap" />
-					<TextBlock Text="DeviceId:" Margin="0 5" />
-					<TextBlock Text="{Binding DeviceId}" TextWrapping="Wrap" />
+					<TextBlock Text="TrackerId:" Margin="0 5" />
+					<TextBlock Text="{Binding TrackerId}" TextWrapping="Wrap" />
 					<TextBlock Text="Coordinates:"  Margin="0 5" />
-					<TextBlock Text="{Binding Coordinate,Converter={StaticResource Coordinate}}" />
-					<TextBlock Text="" />
+					<TextBlock>
+						<Run Text="{Binding Coordinate.Latitude,StringFormat='Lat:\{0\:N6\}'}"/>
+						<LineBreak/>
+						<Run Text="{Binding Coordinate.Longitude,StringFormat='Lon:\{0\:N6\}'}"/>
+						<LineBreak/>
+						<Run Text="{Binding Coordinate.Altitude,StringFormat='Alt:\{0\:N6\}'}"/>
+						<LineBreak/>
+						<Run Text="{Binding Coordinate.Speed,StringFormat='Speed:\{0\:N0\}'}"/>
+					</TextBlock>
 				</StackPanel>
 			</phone:PivotItem>
 
@@ -43,6 +51,18 @@
 
 			<!-- Settings Tab-->
 			<phone:PivotItem Header="{Binding Path=LocalizedResources.SettingsTabTitle, Source={StaticResource LocalizedStrings}}">
+				<views:SettingsView DataContext="{Binding SettingsModel}"/>
+			</phone:PivotItem>
+
+			<!-- Debug Tab-->
+			<phone:PivotItem Header="Debug" x:Name="DebugTab">
+				<ListBox ItemsSource="{Binding DebugLog}">
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding .}" TextWrapping="Wrap"/>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
 			</phone:PivotItem>
 		</phone:Pivot>
 	</Grid>

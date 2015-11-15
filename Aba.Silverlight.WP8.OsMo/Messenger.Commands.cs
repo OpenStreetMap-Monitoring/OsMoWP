@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using Windows.Devices.Geolocation;
@@ -16,6 +17,7 @@ namespace Aba.Silverlight.WP8.OsMo
 
 		private void ProcessReply(string line)
 		{
+			App.ViewModel.AddDebugLog(string.Format("<{0}", line));
 			var pattern = "^([A-Z]+)([:][A-Z0-9_]+)?(|.+)?$";
 			var match = Regex.Match(line.Trim(), pattern);
 			if (match.Success)
@@ -23,9 +25,16 @@ namespace Aba.Silverlight.WP8.OsMo
 				var command = match.Groups[1].Value;
 				var parameter = string.IsNullOrEmpty(match.Groups[2].Value) ? null : match.Groups[2].Value.Substring(1);
 				var addict = string.IsNullOrWhiteSpace(match.Groups[3].Value) ? null : match.Groups[3].Value.Substring(1).Trim();
+				dynamic json = string.IsNullOrEmpty(addict) ? null
+					: JsonConvert.DeserializeObject<dynamic>(addict, new JsonSerializerSettings { Error = (s, e) => { e.ErrorContext.Handled = true; } });
+				if (json == null) json = JsonConvert.DeserializeObject<dynamic>("{}");
 
 				switch (command)
 				{
+					case "BYE":
+						Transport.Shutdown(SocketShutdown.Both);
+						Transport.Close();
+						break;
 					case "GE":
 						CGroup();
 						break;
@@ -39,9 +48,22 @@ namespace Aba.Silverlight.WP8.OsMo
 						});
 						break;
 					case "INIT":
-						CMd();
+						var data = JsonConvert.DeserializeObject<dynamic>(addict);
+						if (data["error"] != null)
+						{
+							Disconnect();
+						}
+						else
+						{
+							CMd();
+						}
 						break;
 					case "MD":
+						InProcess = false;
+						while (SendQueue.Count > 0)
+						{
+							Send(SendQueue.Dequeue());
+						}
 						Do(() => { App.ViewModel.MessageOfTheDay = addict; });
 						break;
 					case "P":
@@ -54,6 +76,7 @@ namespace Aba.Silverlight.WP8.OsMo
 					case "RC":
 						break;
 					case "TO":
+						var session = addict;
 						break;
 					case "T":
 						break;
@@ -79,6 +102,11 @@ namespace Aba.Silverlight.WP8.OsMo
 		}
 
 		#region Tcp api v2 commands
+
+		public void CBye()
+		{
+			Send(new Message("BYE"));
+		}
 
 		public void CGroup()
 		{

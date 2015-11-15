@@ -16,6 +16,7 @@ namespace Aba.Silverlight.WP8.OsMo.Converters
 		{
 			if (value == null) return GetCollapsed(parameter);
 			if (value is bool) return (bool)value ? GetVisible(parameter) : GetCollapsed(parameter);
+			if (value is bool?) return ((bool?)value).GetValueOrDefault() ? GetVisible(parameter) : GetCollapsed(parameter);
 			if (value is ICollection) return (value as ICollection).Count > 0 ? GetVisible(parameter) : GetCollapsed(parameter);
 			if (value is Visibility) return ((Visibility)value == Visibility.Visible) ? GetVisible(parameter) : GetCollapsed(parameter);
 			if (value is string) return string.IsNullOrEmpty(value as string) ? GetCollapsed(parameter) : GetVisible(parameter);

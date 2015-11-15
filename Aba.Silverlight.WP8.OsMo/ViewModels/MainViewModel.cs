@@ -4,6 +4,7 @@ using System.ComponentModel;
 using Aba.Silverlight.WP8.OsMo.Resources;
 using Windows.Devices.Geolocation;
 using Windows.Phone.System.Analytics;
+using System.Collections.Generic;
 
 namespace Aba.Silverlight.WP8.OsMo.ViewModels
 {
@@ -14,6 +15,9 @@ namespace Aba.Silverlight.WP8.OsMo.ViewModels
 		private GroupsModel _GroupsModel;
 		public GroupsModel GroupsModel { get { if (_GroupsModel == null) _GroupsModel = new GroupsModel(); return _GroupsModel; } }
 
+		private SettingsModel _SettingsModel;
+		public SettingsModel SettingsModel { get { if (_SettingsModel == null) _SettingsModel = new SettingsModel(); return _SettingsModel; } }
+
 		private bool _IsServiceStarted = false;
 		public bool IsServiceStarted { get { return _IsServiceStarted; } set { if (value != _IsServiceStarted) { _IsServiceStarted = value; NotifyPropertyChanged(); } } }
 
@@ -23,7 +27,17 @@ namespace Aba.Silverlight.WP8.OsMo.ViewModels
 		private string _MessageOfTheDay;
 		public string MessageOfTheDay { get { return _MessageOfTheDay; } set { if (value != _MessageOfTheDay) { _MessageOfTheDay = value; NotifyPropertyChanged(); } } }
 
-		public string DeviceId { get { return HostInformation.PublisherHostId; } }
+		private ObservableCollection<string> _DebugLog;
+		public ObservableCollection<string> DebugLog { get { if (_DebugLog == null) _DebugLog = new ObservableCollection<string>(); return _DebugLog; } set { if (value != _DebugLog) { _DebugLog = value; NotifyPropertyChanged(); } } }
 
+		public string TrackerId { get { return HostInformation.PublisherHostId; } }
+
+		public void AddDebugLog(string line)
+		{
+			if (SettingsModel.DebugViewEnabled.Value)
+			{
+				App.RootFrame.Dispatcher.BeginInvoke(() => { DebugLog.Add(line.Trim()); });
+			}
+		}
 	}
 }

@@ -9,6 +9,8 @@ using Microsoft.Phone.Shell;
 using Aba.Silverlight.WP8.OsMo.Resources;
 using Aba.Silverlight.WP8.OsMo.ViewModels;
 using Windows.Devices.Geolocation;
+using System.IO.IsolatedStorage;
+using System.IO;
 
 namespace Aba.Silverlight.WP8.OsMo
 {
@@ -25,6 +27,7 @@ namespace Aba.Silverlight.WP8.OsMo
 		public static bool RunningInBackground { get; set; }
 
 		public static PhoneApplicationFrame RootFrame { get; private set; }
+		public MainPage Page { get; set; }
 
 		public App()
 		{
@@ -61,7 +64,35 @@ namespace Aba.Silverlight.WP8.OsMo
 
 		private void Application_Launching(object sender, LaunchingEventArgs e)
 		{
+			ViewModel.SettingsModel.PropertyChanged += SettingsModel_PropertyChanged;
 			Messenger.Connect();
+		}
+
+		void SettingsModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if (Geolocator != null)
+			{
+				switch (e.PropertyName)
+				{
+					case "ReportInterval":
+						Geolocator.ReportInterval = ViewModel.SettingsModel.ReportInterval.Value;
+						break;
+					case "MovementThreshold":
+						Geolocator.MovementThreshold = ViewModel.SettingsModel.MovementThreshold.Value;
+						break;
+					case "DesiredAccuracyInMeters":
+						Geolocator.DesiredAccuracyInMeters = ViewModel.SettingsModel.DesiredAccuracyInMeters.Value;
+						break;
+				}
+			}
+			switch (e.PropertyName)
+			{
+				case "DebugViewEnabled":
+					var debugLogEnabled = ViewModel.SettingsModel.DebugViewEnabled;
+					Page.CheckDebugTab();
+					break;
+			}
+
 		}
 
 		private void Application_Activated(object sender, ActivatedEventArgs e)
@@ -95,24 +126,40 @@ namespace Aba.Silverlight.WP8.OsMo
 			}
 		}
 
-		// Code to execute if a navigation fails
-		private void RootFrame_NavigationFailed(object sender, NavigationFailedEventArgs e)
+		private void Crash(Exception e)
 		{
-			if (Debugger.IsAttached)
+			using (var file = IsolatedStorageFile.GetUserStoreForApplication().CreateFile(string.Format("crash-{0}", Guid.NewGuid())))
 			{
-				// A navigation has failed; break into the debugger
-				Debugger.Break();
+				using (var writer = new StreamWriter(file))
+				{
+					if (e == null)
+					{
+						writer.WriteLine("empty crash");
+					}
+					else
+					{
+						writer.WriteLine(e.Message);
+						writer.WriteLine(e.Source);
+						writer.WriteLine(e.StackTrace);
+						if (e.InnerException != null)
+						{
+							writer.WriteLine(e.InnerException.Message);
+						}
+					}
+				}
 			}
 		}
 
-		// Code to execute on Unhandled Exceptions
+		private void RootFrame_NavigationFailed(object sender, NavigationFailedEventArgs e)
+		{
+			Crash(e.Exception);
+			if (Debugger.IsAttached) Debugger.Break();
+		}
+
 		private void Application_UnhandledException(object sender, ApplicationUnhandledExceptionEventArgs e)
 		{
-			if (Debugger.IsAttached)
-			{
-				// An unhandled exception has occurred; break into the debugger
-				Debugger.Break();
-			}
+			Crash(e.ExceptionObject);
+			if (Debugger.IsAttached) Debugger.Break();
 		}
 
 		#region Phone application initialization
