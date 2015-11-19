@@ -1,9 +1,10 @@
 ﻿using Aba.Silverlight.WP8.OsMo.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
+using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -35,31 +36,33 @@ namespace Aba.Silverlight.WP8.OsMo
 						Transport.Shutdown(SocketShutdown.Both);
 						Transport.Close();
 						break;
+					case "GA":
+						CGroup();
+						break;
+					case "GD":
+						CGroup();
+						break;
 					case "GE":
 						CGroup();
 						break;
 					case "GP":
-						if (Debugger.IsAttached) Debugger.Break();
 						break;
 					case "GROUP":
-						Do(() =>
-						{
-							App.ViewModel.GroupsModel.Groups = JsonConvert.DeserializeObject<IEnumerable<Group>>(addict);
-						});
+						Do(() => { App.ViewModel.GroupsModel.Groups = JsonConvert.DeserializeObject<IEnumerable<Group>>(addict); });
 						break;
 					case "INIT":
-						var data = JsonConvert.DeserializeObject<dynamic>(addict);
-						if (data["error"] != null)
+						if (json["error"] != null)
 						{
 							Disconnect();
 						}
 						else
 						{
+							Do(() => { App.ViewModel.TrackerId = ((JValue)json["id"]).ToObject<string>(); });
 							CMd();
 						}
 						break;
 					case "MD":
-						InProcess = false;
+						Status = ConnectionStatus.Connected;
 						while (SendQueue.Count > 0)
 						{
 							Send(SendQueue.Dequeue());
@@ -67,20 +70,19 @@ namespace Aba.Silverlight.WP8.OsMo
 						Do(() => { App.ViewModel.MessageOfTheDay = addict; });
 						break;
 					case "P":
-						if (Debugger.IsAttached) Debugger.Break();
 						break;
 					case "PP":
-						if (Debugger.IsAttached) Debugger.Break();
 						CP();
 						break;
 					case "RC":
 						break;
 					case "TO":
-						var session = addict;
+						Do(() => { App.ViewModel.SessionId = ((JValue)json["url"]).ToObject<string>(); });
 						break;
 					case "T":
 						break;
 					case "TC":
+						Do(() => { App.ViewModel.SessionId = null; });
 						break;
 					default:
 						if (Debugger.IsAttached) Debugger.Break();
@@ -108,14 +110,24 @@ namespace Aba.Silverlight.WP8.OsMo
 			Send(new Message("BYE"));
 		}
 
-		public void CGroup()
+		public void CGa(string groupName)
 		{
-			Send(new Message("GROUP"));
+			Send(new Message("GA", groupName, null));
+		}
+
+		public void CGd(string groupName)
+		{
+			Send(new Message("GD", groupName, null));
 		}
 
 		public void CGe(string groupName, string displayName)
 		{
 			Send(new Message("GE", groupName, displayName));
+		}
+
+		public void CGroup()
+		{
+			Send(new Message("GROUP"));
 		}
 
 		/// <summary>
@@ -166,10 +178,10 @@ namespace Aba.Silverlight.WP8.OsMo
 		{
 			if (coord == null) return;
 			var addict = new StringBuilder();
-			var format = CultureInfo.InvariantCulture.NumberFormat;
+			var format = new System.Globalization.NumberFormatInfo() { NumberDecimalDigits = 6, NumberDecimalSeparator = ".", NumberGroupSeparator = string.Empty };
 			addict.AppendFormat("L{0}:{1}", coord.Latitude.ToString(format), coord.Longitude.ToString(format));
-			addict.AppendFormat("S{0}A{1}", coord.Speed.GetValueOrDefault().ToString(format), Convert.ToInt32(coord.Altitude.GetValueOrDefault()).ToString(format));
-			addict.AppendFormat("H{0}C{1}", coord.Accuracy.ToString(format), coord.Heading.GetValueOrDefault().ToString(format));
+			addict.AppendFormat("S{0}A{1}", coord.Speed.GetValueOrDefault().ToString("N0", format), coord.Altitude.GetValueOrDefault().ToString("N0", format));
+			addict.AppendFormat("H{0}C{1}", coord.Accuracy.ToString("N0", format), coord.Heading.GetValueOrDefault().ToString("N0", format));
 			addict.AppendFormat("T{0}", Convert.ToInt32(coord.Timestamp.UtcDateTime.Subtract(new DateTime(1970, 1, 1)).TotalSeconds).ToString(format));
 			Send(new Message("T", addict.ToString()));
 		}

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Diagnostics;
 using System.Resources;
 using System.Windows;
@@ -11,6 +12,7 @@ using Aba.Silverlight.WP8.OsMo.ViewModels;
 using Windows.Devices.Geolocation;
 using System.IO.IsolatedStorage;
 using System.IO;
+using System.Text;
 
 namespace Aba.Silverlight.WP8.OsMo
 {
@@ -126,40 +128,57 @@ namespace Aba.Silverlight.WP8.OsMo
 			}
 		}
 
-		private void Crash(Exception e)
+
+
+		public void Crash(Exception e)
+		{
+			var report = new StringBuilder();
+
+			if (e == null)
+			{
+				report.Append("empty crash");
+			}
+			report.AppendLine(e.Message);
+			report.AppendLine(e.Source);
+			report.AppendLine(e.StackTrace);
+			if (e.InnerException != null)
+			{
+				report.AppendLine(e.InnerException.Message);
+			}
+			Crash(report.ToString());
+		}
+
+		public void Crash(string report)
 		{
 			using (var file = IsolatedStorageFile.GetUserStoreForApplication().CreateFile(string.Format("crash-{0}", Guid.NewGuid())))
 			{
 				using (var writer = new StreamWriter(file))
 				{
-					if (e == null)
+					if (string.IsNullOrWhiteSpace(report))
 					{
-						writer.WriteLine("empty crash");
+						writer.WriteLine("empty report");
 					}
 					else
 					{
-						writer.WriteLine(e.Message);
-						writer.WriteLine(e.Source);
-						writer.WriteLine(e.StackTrace);
-						if (e.InnerException != null)
-						{
-							writer.WriteLine(e.InnerException.Message);
-						}
+						writer.WriteLine(report);
 					}
 				}
 			}
+			ViewModel.CrashReports = null;
 		}
 
 		private void RootFrame_NavigationFailed(object sender, NavigationFailedEventArgs e)
 		{
-			Crash(e.Exception);
 			if (Debugger.IsAttached) Debugger.Break();
+			Crash(e.Exception);
+			e.Handled = true;
 		}
 
 		private void Application_UnhandledException(object sender, ApplicationUnhandledExceptionEventArgs e)
 		{
-			Crash(e.ExceptionObject);
 			if (Debugger.IsAttached) Debugger.Break();
+			Crash(e.ExceptionObject);
+			e.Handled = true;
 		}
 
 		#region Phone application initialization

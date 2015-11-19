@@ -163,12 +163,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Aba.Silverlight.WP8.OsMo.GpsTask\Aba.Silverlight.WP8.OsMo.GpsTask.csproj">
-      <Project>{917a223b-cd41-4750-bd80-38833cc62d24}</Project>
-      <Name>Aba.Silverlight.WP8.OsMo.GpsTask</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>

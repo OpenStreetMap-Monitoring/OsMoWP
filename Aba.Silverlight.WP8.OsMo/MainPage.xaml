@@ -14,9 +14,17 @@
 	SupportedOrientations="Portrait"  Orientation="Portrait"
 	shell:SystemTray.IsVisible="True">
 	<Grid x:Name="LayoutRoot" Background="Transparent">
-		<phone:Pivot Title="{Binding Path=LocalizedResources.ApplicationTitle, Source={StaticResource LocalizedStrings}}"
+		<phone:Pivot Title="{Binding .}"
 								 SelectionChanged="Pivot_SelectionChanged"
 								 x:Name="Pivot">
+			<phone:Pivot.TitleTemplate>
+				<DataTemplate>
+					<StackPanel Orientation="Horizontal">
+						<TextBlock Text="{Binding Path=LocalizedResources.ApplicationTitle, Source={StaticResource LocalizedStrings}}"/>
+						<TextBlock Text="{Binding MessengerStatus}" Margin="10 0 0 0"/>
+					</StackPanel>
+				</DataTemplate>
+			</phone:Pivot.TitleTemplate>
 
 			<!-- Tracking Tab-->
 			<phone:PivotItem Header="{Binding Path=LocalizedResources.TrackingTabTitle, Source={StaticResource LocalizedStrings}}">
@@ -31,16 +39,21 @@
 					<TextBlock Text="{Binding MessageOfTheDay}" TextWrapping="Wrap" />
 					<TextBlock Text="TrackerId:" Margin="0 5" />
 					<TextBlock Text="{Binding TrackerId}" TextWrapping="Wrap" />
-					<TextBlock Text="Coordinates:"  Margin="0 5" />
-					<TextBlock>
-						<Run Text="{Binding Coordinate.Latitude,StringFormat='Lat:\{0\:N6\}'}"/>
+					<TextBlock Margin="0 5">
+						<Run Text="{Binding Coordinate.Latitude,StringFormat='Lat:{0:N6}'}"/>
 						<LineBreak/>
-						<Run Text="{Binding Coordinate.Longitude,StringFormat='Lon:\{0\:N6\}'}"/>
+						<Run Text="{Binding Coordinate.Longitude,StringFormat='Lon:{0:N6}'}"/>
 						<LineBreak/>
-						<Run Text="{Binding Coordinate.Altitude,StringFormat='Alt:\{0\:N6\}'}"/>
+						<Run Text="{Binding Coordinate.Altitude,StringFormat='Alt:{0:N0}'}"/>
 						<LineBreak/>
-						<Run Text="{Binding Coordinate.Speed,StringFormat='Speed:\{0\:N0\}'}"/>
+						<Run Text="{Binding Coordinate.Speed,StringFormat='Speed:{0:N0}'}"/>
+						<LineBreak/>
+						<Run Text="{Binding Coordinate.Accuracy,StringFormat='HDOP:{0:N0}'}"/>
 					</TextBlock>
+					<HyperlinkButton Click="SessionButton_Click" Visibility="{Binding SessionId,Converter={StaticResource Visible}}"
+									Content="{Binding SessionId,StringFormat='https://osmo.mobi/s/{0}'}"/>
+					<Button Content="Send crash reports" Visibility="{Binding CrashReports,Converter={StaticResource Visible}}"
+									Click="SendReportsButton_Click"/>
 				</StackPanel>
 			</phone:PivotItem>
 
@@ -56,13 +69,20 @@
 
 			<!-- Debug Tab-->
 			<phone:PivotItem Header="Debug" x:Name="DebugTab">
-				<ListBox ItemsSource="{Binding DebugLog}">
-					<ListBox.ItemTemplate>
-						<DataTemplate>
-							<TextBlock Text="{Binding .}" TextWrapping="Wrap"/>
-						</DataTemplate>
-					</ListBox.ItemTemplate>
-				</ListBox>
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="*"/>
+						<RowDefinition Height="Auto"/>
+					</Grid.RowDefinitions>
+					<ListBox ItemsSource="{Binding DebugLog}">
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<TextBlock Text="{Binding .}" TextWrapping="Wrap"/>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
+					<Button Grid.Row="1" Content="Save log as report" Click="SaveLogButton_Click"/>
+				</Grid>
 			</phone:PivotItem>
 		</phone:Pivot>
 	</Grid>

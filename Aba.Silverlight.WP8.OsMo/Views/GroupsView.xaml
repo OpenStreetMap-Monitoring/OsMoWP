@@ -22,7 +22,8 @@
 							<ColumnDefinition Width="Auto"/>
 							<ColumnDefinition Width="*"/>
 						</Grid.ColumnDefinitions>
-						<CheckBox IsChecked="{Binding Active}" VerticalAlignment="Center" />
+						<CheckBox IsChecked="{Binding Active}" VerticalAlignment="Center"
+											Checked="IsActive_Changed" Unchecked="IsActive_Changed" />
 						<StackPanel Grid.Column="1" Orientation="Vertical">
 							<TextBlock Text="{Binding Name}"/>
 							<TextBlock Text="{Binding Id}"/>
@@ -31,10 +32,12 @@
 				</DataTemplate>
 			</ListBox.ItemTemplate>
 		</ListBox>
-		<Grid Grid.Row="1">
+		<Button x:Name="OpenAddPanelButton" Content="+" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="OpenAddPanelButton_Click"/>
+		<Grid Grid.Row="1" x:Name="AddPanel" Visibility="Collapsed">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
 			<TextBox x:Name="GroupName" Grid.Column="0" />
@@ -56,6 +59,7 @@
 								 Foreground="Gray"
 								 />
 			<Button Grid.Column="2" Content="+" Click="AddButton_Click" />
+			<Button Grid.Column="3" Content="x" Click="CloseAddPanelButton_Click" />
 		</Grid>
 	</Grid>
 </UserControl>

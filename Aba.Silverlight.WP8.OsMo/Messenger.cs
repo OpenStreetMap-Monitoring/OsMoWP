@@ -7,11 +7,14 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
+using Windows.Phone.System.Analytics;
 
 namespace Aba.Silverlight.WP8.OsMo
 {
 	public partial class Messenger
 	{
+		public enum ConnectionStatus { NotConnected = 0, Connecting = 1, Connected = 2 }
+
 		private const string SERVER_DEVICE_ID = "SERVER_DEVICE_ID";
 
 		private Socket Transport { get; set; }
@@ -22,18 +25,18 @@ namespace Aba.Silverlight.WP8.OsMo
 		private string ApplicationId { get; set; }
 		private string DeviceId { get; set; }
 		private string PlatformInfo { get; set; }
-		private bool InProcess { get; set; }
+
+		private ConnectionStatus _Status;
+		private ConnectionStatus Status { get { return _Status; } set { _Status = value; Do(() => { App.ViewModel.MessengerStatus = value; }); } }
 		private string Token { get; set; }
 		private int Serial { get; set; }
 		private Queue<Message> SendQueue { get; set; }
-
-		public bool Connected { get { return Transport.Connected; } }
 
 		public Messenger()
 		{
 			ServiceHost = AppResources.MessengerHost;
 			ApplicationId = WebUtility.UrlEncode(Resources.AppResources.MessengerApplicationId);
-			DeviceId = WebUtility.UrlEncode(App.ViewModel.TrackerId);
+			DeviceId = WebUtility.UrlEncode(HostInformation.PublisherHostId);
 			PlatformInfo = WebUtility.UrlEncode(string.Format("{0} / {1}", Environment.OSVersion.Platform, Environment.OSVersion.Version));
 			Transport = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 			SendQueue = new Queue<Message>();
@@ -41,8 +44,9 @@ namespace Aba.Silverlight.WP8.OsMo
 
 		public void Connect()
 		{
-			if (Transport.Connected || InProcess) return;
-			InProcess = true;
+			if (Transport.Connected || Status == ConnectionStatus.Connecting) return;
+			Status = ConnectionStatus.Connecting;
+			App.ViewModel.AddDebugLog("!Connecting");
 			if (IsolatedStorageSettings.ApplicationSettings.Contains(SERVER_DEVICE_ID))
 			{
 				GetToken(() => { Init(); });
@@ -55,12 +59,13 @@ namespace Aba.Silverlight.WP8.OsMo
 
 		public void Disconnect()
 		{
-			InProcess = false;
 			Token = null;
 			if (Transport.Connected)
 			{
 				CBye();
 			}
+			Status = ConnectionStatus.NotConnected;
+			App.ViewModel.AddDebugLog("!Disconnected");
 		}
 
 		private void GetToken(Action Success)
@@ -114,7 +119,7 @@ namespace Aba.Silverlight.WP8.OsMo
 		{
 			if (string.IsNullOrEmpty(Token))
 			{
-				InProcess = false;
+				Disconnect();
 				return;
 			}
 			var args = new SocketAsyncEventArgs();
@@ -165,7 +170,7 @@ namespace Aba.Silverlight.WP8.OsMo
 			e.Dispose();
 			if (!Transport.Connected)
 			{
-				InProcess = false;
+				Disconnect();
 				return;
 			}
 			var args = new SocketAsyncEventArgs();
@@ -181,7 +186,7 @@ namespace Aba.Silverlight.WP8.OsMo
 				SendQueue.Enqueue(message);
 				Connect();
 			}
-			else if (!InProcess || InProcess && message.Command == "INIT" || InProcess && message.Command == "MD")
+			else if (Status != ConnectionStatus.Connecting || Status == ConnectionStatus.Connecting && (message.Command == "INIT" || message.Command == "MD"))
 			{
 				var args = new SocketAsyncEventArgs();
 				var buffer = Encoding.UTF8.GetBytes(message.ToString());

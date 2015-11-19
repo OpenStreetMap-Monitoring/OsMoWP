@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using Aba.Silverlight.WP8.OsMo.Resources;
 using Windows.Devices.Geolocation;
 using Windows.Phone.System.Analytics;
 using System.Collections.Generic;
+using System.IO.IsolatedStorage;
 
 namespace Aba.Silverlight.WP8.OsMo.ViewModels
 {
@@ -30,7 +32,30 @@ namespace Aba.Silverlight.WP8.OsMo.ViewModels
 		private ObservableCollection<string> _DebugLog;
 		public ObservableCollection<string> DebugLog { get { if (_DebugLog == null) _DebugLog = new ObservableCollection<string>(); return _DebugLog; } set { if (value != _DebugLog) { _DebugLog = value; NotifyPropertyChanged(); } } }
 
-		public string TrackerId { get { return HostInformation.PublisherHostId; } }
+		private string _TrackerId;
+		public string TrackerId { get { return _TrackerId; } set { if (value != _TrackerId) { _TrackerId = value; NotifyPropertyChanged(); } } }
+
+		private string _SessionId;
+		public string SessionId { get { return _SessionId; } set { if (value != _SessionId) { _SessionId = value; NotifyPropertyChanged(); } } }
+
+		private Messenger.ConnectionStatus _MessengerStatus;
+		public Messenger.ConnectionStatus MessengerStatus { get { return _MessengerStatus; } set { if (value != _MessengerStatus) { _MessengerStatus = value; NotifyPropertyChanged(); } } }
+
+		public List<string> CrashReports
+		{
+			get
+			{
+				try
+				{
+					return IsolatedStorageFile.GetUserStoreForApplication().GetFileNames("crash-*").ToList();
+				}
+				catch (Exception ex) { return null; }
+			}
+			set
+			{
+				NotifyPropertyChanged();
+			}
+		}
 
 		public void AddDebugLog(string line)
 		{

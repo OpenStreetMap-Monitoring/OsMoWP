@@ -12,6 +12,10 @@ using Microsoft.Phone.Scheduler;
 using Aba.Silverlight.WP8.OsMo.ViewModels;
 using Windows.Devices.Geolocation;
 using Windows.Phone.System.Analytics;
+using Microsoft.Phone.Tasks;
+using System.Text;
+using System.IO.IsolatedStorage;
+using System.IO;
 
 namespace Aba.Silverlight.WP8.OsMo
 {
@@ -62,5 +66,55 @@ namespace Aba.Silverlight.WP8.OsMo
 			}
 			CheckDebugTab();
 		}
+
+		private void SessionButton_Click(object sender, RoutedEventArgs e)
+		{
+			var webTask = new WebBrowserTask { Uri = new Uri(string.Format("https://osmo.mobi/s/{0}", App.ViewModel.SessionId)) };
+			webTask.Show();
+		}
+
+		private void SendReportsButton_Click(object sender, RoutedEventArgs e)
+		{
+			var body = new StringBuilder();
+			body.AppendFormat("v.{0}\r\n", System.Reflection.Assembly.GetExecutingAssembly().FullName);
+			var iss = IsolatedStorageFile.GetUserStoreForApplication();
+			foreach (var name in App.ViewModel.CrashReports)
+			{
+				try
+				{
+					using (var file = iss.OpenFile(name, System.IO.FileMode.Open))
+					{
+						var reader = new StreamReader(file);
+						body.AppendFormat("\r\n\r\nFileDate:{0:s}\r\n", iss.GetCreationTime(name).UtcDateTime);
+						body.Append(reader.ReadToEnd());
+					}
+				}
+				catch (Exception ex)
+				{
+					(App.Current as App).Crash(ex);
+				}
+			}
+			var email = new EmailComposeTask { To = "abaland@gmail.com", Subject = "WP8 crash reports", Body = body.ToString() };
+			email.Show();
+			foreach (var file in App.ViewModel.CrashReports)
+			{
+				try
+				{
+					iss.DeleteFile(file);
+				}
+				catch (Exception ex)
+				{
+					(App.Current as App).Crash(ex);
+				}
+			}
+			App.ViewModel.CrashReports = null;
+		}
+
+		private void SaveLogButton_Click(object sender, RoutedEventArgs e)
+		{
+			(App.Current as App).Crash(string.Join("\r\n", App.ViewModel.DebugLog));
+			App.ViewModel.CrashReports = null;
+		}
+
 	}
 }
