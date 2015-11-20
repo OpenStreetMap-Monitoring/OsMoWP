@@ -93,14 +93,7 @@ namespace Aba.Silverlight.WP8.OsMo
 
 		private void Do(Action a)
 		{
-			if (App.RunningInBackground)
-			{
-				a();
-			}
-			else
-			{
-				App.RootFrame.Dispatcher.BeginInvoke(a);
-			}
+			App.RootFrame.Dispatcher.BeginInvoke(a);
 		}
 
 		#region Tcp api v2 commands
@@ -174,15 +167,13 @@ namespace Aba.Silverlight.WP8.OsMo
 		/// Send tracking data
 		/// </summary>
 		/// <param name="coord">Gps point</param>
-		public void CT(Geocoordinate coord)
+		public void CT(Coordinate coord)
 		{
 			if (coord == null) return;
 			var addict = new StringBuilder();
 			var format = new System.Globalization.NumberFormatInfo() { NumberDecimalDigits = 6, NumberDecimalSeparator = ".", NumberGroupSeparator = string.Empty };
-			addict.AppendFormat("L{0}:{1}", coord.Latitude.ToString(format), coord.Longitude.ToString(format));
-			addict.AppendFormat("S{0}A{1}", coord.Speed.GetValueOrDefault().ToString("N0", format), coord.Altitude.GetValueOrDefault().ToString("N0", format));
-			addict.AppendFormat("H{0}C{1}", coord.Accuracy.ToString("N0", format), coord.Heading.GetValueOrDefault().ToString("N0", format));
-			addict.AppendFormat("T{0}", Convert.ToInt32(coord.Timestamp.UtcDateTime.Subtract(new DateTime(1970, 1, 1)).TotalSeconds).ToString(format));
+			addict.AppendFormat("L{0}:{1}", coord.Lat.ToString("N6", format), coord.Lon.ToString("N6", format));
+			addict.AppendFormat("S{0}A{1}H{2}C{3}T{4}", coord.Speed, coord.Alt, coord.HDOP, coord.Course, coord.Timestamp);
 			Send(new Message("T", addict.ToString()));
 		}
 

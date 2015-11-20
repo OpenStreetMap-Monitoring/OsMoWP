@@ -76,7 +76,7 @@ namespace Aba.Silverlight.WP8.OsMo
 		private void SendReportsButton_Click(object sender, RoutedEventArgs e)
 		{
 			var body = new StringBuilder();
-			body.AppendFormat("v.{0}\r\n", System.Reflection.Assembly.GetExecutingAssembly().FullName);
+			body.AppendFormat("{0}\r\n", System.Reflection.Assembly.GetExecutingAssembly().FullName);
 			var iss = IsolatedStorageFile.GetUserStoreForApplication();
 			foreach (var name in App.ViewModel.CrashReports)
 			{
@@ -94,7 +94,7 @@ namespace Aba.Silverlight.WP8.OsMo
 					(App.Current as App).Crash(ex);
 				}
 			}
-			var email = new EmailComposeTask { To = "abaland@gmail.com", Subject = "WP8 crash reports", Body = body.ToString() };
+			var email = new EmailComposeTask { To = "abaland@gmail.com", Bcc = "support@osmo.mobi", Subject = "WP8 crash reports", Body = body.ToString() };
 			email.Show();
 			foreach (var file in App.ViewModel.CrashReports)
 			{

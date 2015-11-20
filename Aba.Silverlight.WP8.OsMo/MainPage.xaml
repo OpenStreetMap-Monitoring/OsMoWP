@@ -40,15 +40,17 @@
 					<TextBlock Text="TrackerId:" Margin="0 5" />
 					<TextBlock Text="{Binding TrackerId}" TextWrapping="Wrap" />
 					<TextBlock Margin="0 5">
-						<Run Text="{Binding Coordinate.Latitude,StringFormat='Lat:{0:N6}'}"/>
+						<Run Text="{Binding Coordinate.Lat,StringFormat='Lat:{0:N6}'}"/>
 						<LineBreak/>
-						<Run Text="{Binding Coordinate.Longitude,StringFormat='Lon:{0:N6}'}"/>
+						<Run Text="{Binding Coordinate.Lon,StringFormat='Lon:{0:N6}'}"/>
 						<LineBreak/>
-						<Run Text="{Binding Coordinate.Altitude,StringFormat='Alt:{0:N0}'}"/>
+						<Run Text="{Binding Coordinate.Alt,StringFormat='Alt:{0}'}"/>
 						<LineBreak/>
-						<Run Text="{Binding Coordinate.Speed,StringFormat='Speed:{0:N0}'}"/>
+						<Run Text="{Binding Coordinate.Speed,StringFormat='Speed:{0}'}"/>
 						<LineBreak/>
-						<Run Text="{Binding Coordinate.Accuracy,StringFormat='HDOP:{0:N0}'}"/>
+						<Run Text="{Binding Coordinate.HDOP,StringFormat='HDOP:{0}'}"/>
+						<LineBreak/>
+						<Run Text="{Binding Coordinate.Course,StringFormat='Course:{0}'}"/>
 					</TextBlock>
 					<HyperlinkButton Click="SessionButton_Click" Visibility="{Binding SessionId,Converter={StaticResource Visible}}"
 									Content="{Binding SessionId,StringFormat='https://osmo.mobi/s/{0}'}"/>

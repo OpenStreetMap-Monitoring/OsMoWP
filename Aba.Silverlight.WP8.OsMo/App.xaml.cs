@@ -13,6 +13,7 @@ using Windows.Devices.Geolocation;
 using System.IO.IsolatedStorage;
 using System.IO;
 using System.Text;
+using Aba.Silverlight.WP8.OsMo.Models;
 
 namespace Aba.Silverlight.WP8.OsMo
 {
@@ -121,10 +122,11 @@ namespace Aba.Silverlight.WP8.OsMo
 
 		private void Geolocator_PositionChanged(Geolocator sender, PositionChangedEventArgs args)
 		{
-			App.Messenger.CT(args.Position.Coordinate);
+			var coord = Coordinate.Create(args.Position.Coordinate);
+			App.Messenger.CT(coord);
 			if (!App.RunningInBackground)
 			{
-				App.RootFrame.Dispatcher.BeginInvoke(() => { App.ViewModel.Coordinate = args.Position.Coordinate; });
+				App.RootFrame.Dispatcher.BeginInvoke(() => { App.ViewModel.Coordinate = coord; });
 			}
 		}
 

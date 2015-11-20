@@ -103,6 +103,7 @@
     </Compile>
     <Compile Include="Messenger.Commands.cs" />
     <Compile Include="Messenger.cs" />
+    <Compile Include="Models\Coordinate.cs" />
     <Compile Include="Models\Group.cs" />
     <Compile Include="Models\Message.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
