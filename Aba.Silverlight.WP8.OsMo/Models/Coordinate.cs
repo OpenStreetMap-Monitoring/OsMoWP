@@ -14,7 +14,8 @@ namespace Aba.Silverlight.WP8.OsMo.Models
 		public double Lon { get; set; }
 		public int HDOP { get; set; }
 		public int Alt { get; set; }
-		public int Speed { get; set; }
+		public double Speed { get; set; }
+		public int SpeedKmh { get { return Convert.ToInt32(Speed * 3.6); } }
 		public int Course { get; set; }
 		public int Timestamp { get; set; }
 		public static Coordinate Create(Geocoordinate underlayed)
@@ -26,7 +27,7 @@ namespace Aba.Silverlight.WP8.OsMo.Models
 				Course = Convert.ToInt32(underlayed.Heading),
 				Lat = underlayed.Latitude,
 				Lon = underlayed.Longitude,
-				Speed = Convert.ToInt32(underlayed.Speed * 3.6),
+				Speed = underlayed.Speed.GetValueOrDefault(0),
 				Timestamp = Convert.ToInt32(underlayed.Timestamp.UtcDateTime.Subtract(new DateTime(1970, 1, 1)).TotalSeconds),
 			};
 		}

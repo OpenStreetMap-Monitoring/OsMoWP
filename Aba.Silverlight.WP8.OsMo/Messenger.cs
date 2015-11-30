@@ -15,7 +15,8 @@ namespace Aba.Silverlight.WP8.OsMo
 	{
 		public enum ConnectionStatus { NotConnected = 0, Connecting = 1, Connected = 2 }
 
-		private const string SERVER_DEVICE_ID = "SERVER_DEVICE_ID";
+		public const string SERVER_DEVICE_ID = "SERVER_DEVICE_ID";
+		public const string SERVER_USER_KEY = "SERVER_USER_KEY";
 
 		private Socket Transport { get; set; }
 
@@ -70,7 +71,8 @@ namespace Aba.Silverlight.WP8.OsMo
 
 		private void GetToken(Action Success)
 		{
-			if (!IsolatedStorageSettings.ApplicationSettings.Contains(SERVER_DEVICE_ID)) return;
+			var iss = IsolatedStorageSettings.ApplicationSettings;
+			if (!iss.Contains(SERVER_DEVICE_ID)) return;
 			var client = new WebClient();
 			client.DownloadStringCompleted += (s, e) =>
 			{
@@ -87,8 +89,8 @@ namespace Aba.Silverlight.WP8.OsMo
 					Disconnect();
 				}
 			};
-			client.DownloadStringAsync(new Uri(string.Format("{0}/init?app={1}&device={2}&serial={3}", ServiceHost, ApplicationId
-				, IsolatedStorageSettings.ApplicationSettings[SERVER_DEVICE_ID], Serial++)));
+			client.DownloadStringAsync(new Uri(string.Format("{0}/init?app={1}&device={2}&serial={3}{4}", ServiceHost, ApplicationId
+				, iss[SERVER_DEVICE_ID], Serial++, iss.Contains(SERVER_USER_KEY) ? string.Format("&user={0}", iss[SERVER_USER_KEY]) : null)));
 		}
 
 		private void RegisterDevice(Action Success)

@@ -46,7 +46,7 @@
 						<LineBreak/>
 						<Run Text="{Binding Coordinate.Alt,StringFormat='Alt:{0}'}"/>
 						<LineBreak/>
-						<Run Text="{Binding Coordinate.Speed,StringFormat='Speed:{0}'}"/>
+						<Run Text="{Binding Coordinate.SpeedKmh,StringFormat='Speed:{0}'}"/>
 						<LineBreak/>
 						<Run Text="{Binding Coordinate.HDOP,StringFormat='HDOP:{0}'}"/>
 						<LineBreak/>
@@ -62,6 +62,11 @@
 			<!-- Groups Tab-->
 			<phone:PivotItem Header="Groups">
 				<views:GroupsView DataContext="{Binding GroupsModel}"/>
+			</phone:PivotItem>
+
+			<!-- Login Tab-->
+			<phone:PivotItem Header="Login" x:Name="LoginTab">
+				<phone:WebBrowser x:Name="LoginBrowser" Navigated="LoginBrowser_Navigated" />
 			</phone:PivotItem>
 
 			<!-- Settings Tab-->

@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aba.Silverlight.WP8.OsMo", "Aba.Silverlight.WP8.OsMo\Aba.Silverlight.WP8.OsMo.csproj", "{B3BA0224-A36F-4A19-9992-E950BD1C4120}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aba.Silverlight.WP8.OsMo.GpsTask", "Aba.Silverlight.WP8.OsMo.GpsTask\Aba.Silverlight.WP8.OsMo.GpsTask.csproj", "{917A223B-CD41-4750-BD80-38833CC62D24}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,18 @@ Global
 		{B3BA0224-A36F-4A19-9992-E950BD1C4120}.Release|x86.ActiveCfg = Release|x86
 		{B3BA0224-A36F-4A19-9992-E950BD1C4120}.Release|x86.Build.0 = Release|x86
 		{B3BA0224-A36F-4A19-9992-E950BD1C4120}.Release|x86.Deploy.0 = Release|x86
+		{917A223B-CD41-4750-BD80-38833CC62D24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{917A223B-CD41-4750-BD80-38833CC62D24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{917A223B-CD41-4750-BD80-38833CC62D24}.Debug|ARM.ActiveCfg = Debug|ARM
+		{917A223B-CD41-4750-BD80-38833CC62D24}.Debug|ARM.Build.0 = Debug|ARM
+		{917A223B-CD41-4750-BD80-38833CC62D24}.Debug|x86.ActiveCfg = Debug|x86
+		{917A223B-CD41-4750-BD80-38833CC62D24}.Debug|x86.Build.0 = Debug|x86
+		{917A223B-CD41-4750-BD80-38833CC62D24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{917A223B-CD41-4750-BD80-38833CC62D24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{917A223B-CD41-4750-BD80-38833CC62D24}.Release|ARM.ActiveCfg = Release|ARM
+		{917A223B-CD41-4750-BD80-38833CC62D24}.Release|ARM.Build.0 = Release|ARM
+		{917A223B-CD41-4750-BD80-38833CC62D24}.Release|x86.ActiveCfg = Release|x86
+		{917A223B-CD41-4750-BD80-38833CC62D24}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

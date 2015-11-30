@@ -16,6 +16,7 @@ using Microsoft.Phone.Tasks;
 using System.Text;
 using System.IO.IsolatedStorage;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Aba.Silverlight.WP8.OsMo
 {
@@ -31,6 +32,15 @@ namespace Aba.Silverlight.WP8.OsMo
 		protected override void OnNavigatedTo(NavigationEventArgs e)
 		{
 			(App.Current as App).Page = this;
+			var iss = IsolatedStorageSettings.ApplicationSettings;
+			if (iss.Contains(Messenger.SERVER_DEVICE_ID) && !iss.Contains(Messenger.SERVER_USER_KEY))
+			{
+				LoginBrowser.Source = new Uri(string.Format("https://osmo.mobi/signin?type=m&key={0}", IsolatedStorageSettings.ApplicationSettings[Messenger.SERVER_DEVICE_ID]));
+			}
+			else
+			{
+				Pivot.Items.Remove(LoginTab);
+			}
 		}
 
 		private void ServiceButton_Click(object sender, RoutedEventArgs e)
@@ -114,6 +124,19 @@ namespace Aba.Silverlight.WP8.OsMo
 		{
 			(App.Current as App).Crash(string.Join("\r\n", App.ViewModel.DebugLog));
 			App.ViewModel.CrashReports = null;
+		}
+
+		private void LoginBrowser_Navigated(object sender, NavigationEventArgs e)
+		{
+			var match = Regex.Match(e.Uri.ToString(), "^https[:][/][/]api[.]osmo[.]mobi[/]rd[?]nick=([a-z0-9]+)&user=([a-z0-9]+)&", RegexOptions.IgnoreCase);
+			if (match.Success)
+			{
+				lock (IsolatedStorageSettings.ApplicationSettings)
+				{
+					IsolatedStorageSettings.ApplicationSettings[Messenger.SERVER_USER_KEY] = match.Groups[2].Value;
+					IsolatedStorageSettings.ApplicationSettings.Save();
+				}
+			}
 		}
 
 	}

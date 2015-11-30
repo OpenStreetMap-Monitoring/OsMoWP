@@ -173,7 +173,7 @@ namespace Aba.Silverlight.WP8.OsMo
 			var addict = new StringBuilder();
 			var format = new System.Globalization.NumberFormatInfo() { NumberDecimalDigits = 6, NumberDecimalSeparator = ".", NumberGroupSeparator = string.Empty };
 			addict.AppendFormat("L{0}:{1}", coord.Lat.ToString("N6", format), coord.Lon.ToString("N6", format));
-			addict.AppendFormat("S{0}A{1}H{2}C{3}T{4}", coord.Speed, coord.Alt, coord.HDOP, coord.Course, coord.Timestamp);
+			addict.AppendFormat("S{0}A{1}H{2}C{3}T{4}", coord.Speed.ToString("N2", format), coord.Alt, coord.HDOP, coord.Course, coord.Timestamp);
 			Send(new Message("T", addict.ToString()));
 		}
 
