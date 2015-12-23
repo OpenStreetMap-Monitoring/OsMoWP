@@ -70,11 +70,20 @@ namespace Aba.Silverlight.WP8.OsMo
 
 		private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			if (Pivot.SelectedIndex == 1 && App.ViewModel.GroupsModel.Groups == null)
+			if (Pivot.SelectedItem == GroupsTab && App.ViewModel.GroupsModel.Groups == null)
 			{
 				App.Messenger.CGroup();
 			}
-			CheckDebugTab();
+
+			if (Pivot.SelectedItem == MapTab)
+			{
+				App.ViewModel.IsMapVisible = true;
+			}
+			else
+			{
+				App.ViewModel.IsMapVisible = false;
+			}
+			this.Dispatcher.BeginInvoke(CheckDebugTab);
 		}
 
 		private void SessionButton_Click(object sender, RoutedEventArgs e)
@@ -135,6 +144,7 @@ namespace Aba.Silverlight.WP8.OsMo
 				{
 					IsolatedStorageSettings.ApplicationSettings[Messenger.SERVER_USER_KEY] = match.Groups[2].Value;
 					IsolatedStorageSettings.ApplicationSettings.Save();
+					Pivot.Items.Remove(LoginTab);
 				}
 			}
 		}

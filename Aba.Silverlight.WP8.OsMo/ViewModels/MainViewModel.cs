@@ -24,6 +24,9 @@ namespace Aba.Silverlight.WP8.OsMo.ViewModels
 		private bool _IsServiceStarted = false;
 		public bool IsServiceStarted { get { return _IsServiceStarted; } set { if (value != _IsServiceStarted) { _IsServiceStarted = value; NotifyPropertyChanged(); } } }
 
+		private bool _IsMapVisible = false;
+		public bool IsMapVisible { get { return _IsMapVisible; } set { if (value != _IsMapVisible) { _IsMapVisible = value; NotifyPropertyChanged(); } } }
+
 		private Coordinate _Coordinate;
 		public Coordinate Coordinate { get { return _Coordinate; } set { if (value != _Coordinate) { _Coordinate = value; NotifyPropertyChanged(); } } }
 

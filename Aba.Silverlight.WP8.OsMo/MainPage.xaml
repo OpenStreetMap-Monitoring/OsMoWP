@@ -28,44 +28,83 @@
 
 			<!-- Tracking Tab-->
 			<phone:PivotItem Header="{Binding Path=LocalizedResources.TrackingTabTitle, Source={StaticResource LocalizedStrings}}">
-				<StackPanel>
-					<StackPanel Orientation="Horizontal" Visibility="{Binding MessageOfTheDay,Converter={StaticResource Visible}}">
-						<Button Content="Start" IsEnabled="{Binding IsServiceStarted,Converter={StaticResource Bool}}" Click="ServiceButton_Click" />
-						<Button Content="Stop" IsEnabled="{Binding IsServiceStarted,Converter={StaticResource Bool},ConverterParameter=Inverse}" Click="ServiceButton_Click" />
-					</StackPanel>
-					<TextBlock Text="Service started" Visibility="{Binding IsServiceStarted,Converter={StaticResource Visible}}" />
-					<TextBlock Text="Service stopped" Visibility="{Binding IsServiceStarted,Converter={StaticResource Visible},ConverterParameter=Inverse}" />
-					<TextBlock Text="Message of the day:" Margin="0 5" />
-					<TextBlock Text="{Binding MessageOfTheDay}" TextWrapping="Wrap" />
-					<TextBlock Text="TrackerId:" Margin="0 5" />
-					<TextBlock Text="{Binding TrackerId}" TextWrapping="Wrap" />
-					<TextBlock Margin="0 5">
-						<Run Text="{Binding Coordinate.Lat,StringFormat='Lat:{0:N6}'}"/>
-						<LineBreak/>
-						<Run Text="{Binding Coordinate.Lon,StringFormat='Lon:{0:N6}'}"/>
-						<LineBreak/>
-						<Run Text="{Binding Coordinate.Alt,StringFormat='Alt:{0}'}"/>
-						<LineBreak/>
-						<Run Text="{Binding Coordinate.SpeedKmh,StringFormat='Speed:{0}'}"/>
-						<LineBreak/>
-						<Run Text="{Binding Coordinate.HDOP,StringFormat='HDOP:{0}'}"/>
-						<LineBreak/>
-						<Run Text="{Binding Coordinate.Course,StringFormat='Course:{0}'}"/>
-					</TextBlock>
-					<HyperlinkButton Click="SessionButton_Click" Visibility="{Binding SessionId,Converter={StaticResource Visible}}"
+				<ScrollViewer>
+					<StackPanel>
+						<StackPanel Orientation="Horizontal" Visibility="{Binding MessageOfTheDay,Converter={StaticResource Visible}}">
+							<Button Content="{Binding Path=LocalizedResources.TrackingStart, Source={StaticResource LocalizedStrings}}" IsEnabled="{Binding IsServiceStarted,Converter={StaticResource Bool}}" Click="ServiceButton_Click" />
+							<Button Content="{Binding Path=LocalizedResources.TrackingStop, Source={StaticResource LocalizedStrings}}" IsEnabled="{Binding IsServiceStarted,Converter={StaticResource Bool},ConverterParameter=Inverse}" Click="ServiceButton_Click" />
+						</StackPanel>
+						<TextBlock Text="{Binding Path=LocalizedResources.TrackingServiceStarted, Source={StaticResource LocalizedStrings}}" Visibility="{Binding IsServiceStarted,Converter={StaticResource Visible}}" />
+						<TextBlock Text="{Binding Path=LocalizedResources.TrackingServiceStopped, Source={StaticResource LocalizedStrings}}" Visibility="{Binding IsServiceStarted,Converter={StaticResource Visible},ConverterParameter=Inverse}" />
+						<TextBlock Text="{Binding Path=LocalizedResources.TrackingMotd, Source={StaticResource LocalizedStrings}}" Margin="0 5" />
+						<TextBlock Text="{Binding MessageOfTheDay}" TextWrapping="Wrap" />
+						<TextBlock Text="TrackerId:" Margin="0 5" />
+						<TextBlock Text="{Binding TrackerId}" TextWrapping="Wrap" />
+						<Grid Visibility="{Binding Coordinate, Converter={StaticResource Visible}}">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="*" />
+								<ColumnDefinition Width="*" />
+							</Grid.ColumnDefinitions>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+							</Grid.RowDefinitions>
+							<TextBlock Grid.Column="0" Grid.Row="0">
+								<Run Text="Latitude" />
+								<LineBreak />
+								<Run Text="{Binding Coordinate.Lat,StringFormat='\{0:N6}'}" FontSize="28" />
+							</TextBlock>
+							<TextBlock Grid.Column="1" Grid.Row="0">
+								<Run Text="Longitude" />
+								<LineBreak />
+								<Run Text="{Binding Coordinate.Lon,StringFormat='\{0:N6}'}" FontSize="28" />
+							</TextBlock>
+							<TextBlock Grid.Column="0" Grid.Row="1">
+								<Run Text="Speed" />
+								<LineBreak />
+								<Run Text="{Binding Coordinate.SpeedKmh,StringFormat='\{0:N0}'}" FontSize="32" />
+							</TextBlock>
+							<TextBlock Grid.Column="1" Grid.Row="1">
+								<Run Text="Course" />
+								<LineBreak />
+								<Run Text="{Binding Coordinate.Course,StringFormat='\{0:N0}'}" FontSize="32" />
+							</TextBlock>
+							<TextBlock Grid.Column="0" Grid.Row="2">
+								<Run Text="Alt" />
+								<LineBreak />
+								<Run Text="{Binding Coordinate.Alt,StringFormat='\{0:N0}'}" FontSize="24" />
+							</TextBlock>
+							<TextBlock Grid.Column="1" Grid.Row="2">
+								<Run Text="HDOP" />
+								<LineBreak />
+								<Run Text="{Binding Coordinate.HDOP,StringFormat='\{0:N0}'}" FontSize="24" />
+							</TextBlock>
+						</Grid>
+						<HyperlinkButton Click="SessionButton_Click" Visibility="{Binding SessionId,Converter={StaticResource Visible}}"
 									Content="{Binding SessionId,StringFormat='https://osmo.mobi/s/{0}'}"/>
-					<Button Content="Send crash reports" Visibility="{Binding CrashReports,Converter={StaticResource Visible}}"
+						<Button Content="{Binding Path=LocalizedResources.TrackingSendReports, Source={StaticResource LocalizedStrings}}"
+									Visibility="{Binding CrashReports,Converter={StaticResource Visible}}"
 									Click="SendReportsButton_Click"/>
-				</StackPanel>
+					</StackPanel>
+				</ScrollViewer>
+			</phone:PivotItem>
+
+			<!-- Map Tab-->
+			<phone:PivotItem Header="{Binding Path=LocalizedResources.MapTabTitle, Source={StaticResource LocalizedStrings}}"
+											 x:Name="MapTab">
+				<views:MapView />
 			</phone:PivotItem>
 
 			<!-- Groups Tab-->
-			<phone:PivotItem Header="Groups">
+			<phone:PivotItem Header="{Binding Path=LocalizedResources.GroupsTabTitle, Source={StaticResource LocalizedStrings}}"
+											 x:Name="GroupsTab">
 				<views:GroupsView DataContext="{Binding GroupsModel}"/>
 			</phone:PivotItem>
 
 			<!-- Login Tab-->
-			<phone:PivotItem Header="Login" x:Name="LoginTab">
+			<phone:PivotItem Header="{Binding Path=LocalizedResources.LoginTabTitle, Source={StaticResource LocalizedStrings}}" 
+											 x:Name="LoginTab">
 				<phone:WebBrowser x:Name="LoginBrowser" Navigated="LoginBrowser_Navigated" />
 			</phone:PivotItem>
 

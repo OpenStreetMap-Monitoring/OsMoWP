@@ -1,7 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Deployment xmlns="http://schemas.microsoft.com/windowsphone/2012/deployment" AppPlatformVersion="8.0">
-  <DefaultLanguage xmlns="" code="en-US" />
-  <App xmlns="" ProductID="{b3ba0224-a36f-4a19-9992-e950bd1c4120}" Title="OsMo" RuntimeType="Silverlight" Version="1.0.0.1" Genre="apps.normal" Author="Aba.Silverlight.WP8.OsMo author" Description="Sample description" Publisher="Aba.Silverlight.WP8.OsMo" PublisherID="{2b8c8d8b-9966-488a-8ca1-b61939d21b43}">
+  <DefaultLanguage xmlns="" code="en" />
+  <Languages xmlns="">
+    <Language code="en" />
+    <Language code="ru" />
+  </Languages>
+  <App xmlns="" ProductID="{b3ba0224-a36f-4a19-9992-e950bd1c4120}" Title="OsMo" RuntimeType="Silverlight" Version="1.0.5.0" Genre="apps.normal" Author="Aba.Silverlight.WP8.OsMo author" Description="Osm monitoring client" Publisher="Aba.Silverlight.WP8.OsMo" PublisherID="{2b8c8d8b-9966-488a-8ca1-b61939d21b43}">
     <IconPath IsRelative="true" IsResource="false">Assets\osmo-app-icon-100.png</IconPath>
     <Capabilities>
       <Capability Name="ID_CAP_NETWORKING" />
@@ -28,14 +32,10 @@
           <Count>0</Count>
           <BackgroundImageURI IsRelative="true" IsResource="false">Assets\Tiles\osmo-tile-medium-336.png</BackgroundImageURI>
           <Title>OsMo</Title>
-          <BackContent>
-          </BackContent>
-          <BackBackgroundImageURI>
-          </BackBackgroundImageURI>
-          <BackTitle>
-          </BackTitle>
-          <DeviceLockImageURI>
-          </DeviceLockImageURI>
+          <BackContent></BackContent>
+          <BackBackgroundImageURI></BackBackgroundImageURI>
+          <BackTitle></BackTitle>
+          <DeviceLockImageURI></DeviceLockImageURI>
           <HasLarge>False</HasLarge>
         </TemplateFlip>
       </PrimaryToken>

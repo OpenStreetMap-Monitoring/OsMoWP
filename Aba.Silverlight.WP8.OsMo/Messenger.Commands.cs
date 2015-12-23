@@ -36,6 +36,8 @@ namespace Aba.Silverlight.WP8.OsMo
 						Transport.Shutdown(SocketShutdown.Both);
 						Transport.Close();
 						break;
+					case "G":
+						break;
 					case "GA":
 						CGroup();
 						break;
@@ -46,6 +48,9 @@ namespace Aba.Silverlight.WP8.OsMo
 						CGroup();
 						break;
 					case "GP":
+						CGpr(parameter);
+						break;
+					case "GPR":
 						break;
 					case "GROUP":
 						Do(() => { App.ViewModel.GroupsModel.Groups = JsonConvert.DeserializeObject<IEnumerable<Group>>(addict); });
@@ -116,6 +121,11 @@ namespace Aba.Silverlight.WP8.OsMo
 		public void CGe(string groupName, string displayName)
 		{
 			Send(new Message("GE", groupName, displayName));
+		}
+
+		public void CGpr(string groupName)
+		{
+			Send(new Message("GPR", groupName, null));
 		}
 
 		public void CGroup()

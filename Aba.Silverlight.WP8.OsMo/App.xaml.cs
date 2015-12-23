@@ -19,7 +19,6 @@ namespace Aba.Silverlight.WP8.OsMo
 {
 	public partial class App : Application
 	{
-
 		private static MainViewModel _ViewModel = null;
 		public static MainViewModel ViewModel { get { if (_ViewModel == null) { _ViewModel = new MainViewModel(); } return _ViewModel; } }
 
@@ -50,9 +49,9 @@ namespace Aba.Silverlight.WP8.OsMo
 			App.Geolocator = new Geolocator
 			{
 				DesiredAccuracy = PositionAccuracy.High,
-				DesiredAccuracyInMeters = 50,
-				MovementThreshold = 5,
-				ReportInterval = 1000
+				DesiredAccuracyInMeters = ViewModel.SettingsModel.DesiredAccuracyInMeters.Value,
+				MovementThreshold = ViewModel.SettingsModel.MovementThreshold.Value,
+				ReportInterval = ViewModel.SettingsModel.ReportInterval.Value,
 			};
 			App.Messenger.CTo();
 			App.Geolocator.PositionChanged += Geolocator_PositionChanged;

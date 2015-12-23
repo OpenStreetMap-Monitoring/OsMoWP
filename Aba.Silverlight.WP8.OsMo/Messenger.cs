@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Threading;
 using Windows.Phone.System.Analytics;
 
 namespace Aba.Silverlight.WP8.OsMo
@@ -17,9 +18,10 @@ namespace Aba.Silverlight.WP8.OsMo
 
 		public const string SERVER_DEVICE_ID = "SERVER_DEVICE_ID";
 		public const string SERVER_USER_KEY = "SERVER_USER_KEY";
+		private const string MESSENGER_APPLICATION_ID = "U33_Kqrt52pN";
+		private const string MESSENGER_HOST = "https://api.osmo.mobi";
 
 		private Socket Transport { get; set; }
-
 		private string ServiceHost { get; set; }
 		private string DataHost { get; set; }
 		private int DataPort { get; set; }
@@ -32,15 +34,27 @@ namespace Aba.Silverlight.WP8.OsMo
 		private string Token { get; set; }
 		private int Serial { get; set; }
 		private Queue<Message> SendQueue { get; set; }
+		private DispatcherTimer Pinger { get; set; }
 
 		public Messenger()
 		{
-			ServiceHost = AppResources.MessengerHost;
-			ApplicationId = WebUtility.UrlEncode(Resources.AppResources.MessengerApplicationId);
+			ServiceHost = MESSENGER_HOST;
+			ApplicationId = WebUtility.UrlEncode(MESSENGER_APPLICATION_ID);
 			DeviceId = WebUtility.UrlEncode(HostInformation.PublisherHostId);
 			PlatformInfo = WebUtility.UrlEncode(string.Format("{0} / {1}", Environment.OSVersion.Platform, Environment.OSVersion.Version));
 			Transport = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 			SendQueue = new Queue<Message>();
+			Pinger = new DispatcherTimer() { Interval = new TimeSpan(0, 1, 0) };
+			Pinger.Tick += Pinger_Tick;
+			Pinger.Start();
+		}
+
+		void Pinger_Tick(object sender, EventArgs e)
+		{
+			if (App.ViewModel.SettingsModel.PersistentConnection.GetValueOrDefault())
+			{
+				CP();
+			}
 		}
 
 		public void Connect()

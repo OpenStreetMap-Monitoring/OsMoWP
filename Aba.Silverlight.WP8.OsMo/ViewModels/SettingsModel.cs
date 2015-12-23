@@ -9,6 +9,7 @@ using Aba.Silverlight.WP8.OsMo.Models;
 using System.IO.IsolatedStorage;
 using Windows.Foundation.Metadata;
 using System.Runtime.CompilerServices;
+using System.Device.Location;
 
 namespace Aba.Silverlight.WP8.OsMo.ViewModels
 {
@@ -44,6 +45,27 @@ namespace Aba.Silverlight.WP8.OsMo.ViewModels
 			set { if (value != _DebugViewEnabled) { _DebugViewEnabled = value; Save(value); NotifyPropertyChanged(); } }
 		}
 
+		private bool? _PersistentConnection = (bool?)SettingsModel.Get();
+		public bool? PersistentConnection
+		{
+			get { return _PersistentConnection; }
+			set { if (value != _PersistentConnection) { _PersistentConnection = value; Save(value); NotifyPropertyChanged(); } }
+		}
+
+		private GeoCoordinate _MapCenter = (GeoCoordinate)SettingsModel.Get();
+		public GeoCoordinate MapCenter
+		{
+			get { return _MapCenter; }
+			set { if (value != _MapCenter) { _MapCenter = value; Save(value); NotifyPropertyChanged(); } }
+		}
+
+		private double? _MapZoom = (double?)SettingsModel.Get();
+		public double? MapZoom
+		{
+			get { return _MapZoom; }
+			set { if (value != _MapZoom) { _MapZoom = value; Save(value); NotifyPropertyChanged(); } }
+		}
+
 		private void Save(object value, [CallerMemberName] string propertyName = "none passed")
 		{
 			lock (IsolatedStorageSettings.ApplicationSettings)
@@ -65,6 +87,9 @@ namespace Aba.Silverlight.WP8.OsMo.ViewModels
 			if (MovementThreshold == null) MovementThreshold = 1;
 			if (DesiredAccuracyInMeters == null) DesiredAccuracyInMeters = 10;
 			if (DebugViewEnabled == null) DebugViewEnabled = false;
+			if (PersistentConnection == null) PersistentConnection = false;
+			if (MapCenter == null) MapCenter = new GeoCoordinate();
+			if (MapZoom == null) MapZoom = 2;
 		}
 	}
 }

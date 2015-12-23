@@ -61,24 +61,6 @@ namespace Aba.Silverlight.WP8.OsMo.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to add.
-        /// </summary>
-        public static string AppBarButtonText {
-            get {
-                return ResourceManager.GetString("AppBarButtonText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Menu Item.
-        /// </summary>
-        public static string AppBarMenuItemText {
-            get {
-                return ResourceManager.GetString("AppBarMenuItemText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to OsMo.
         /// </summary>
         public static string ApplicationTitle {
@@ -88,20 +70,29 @@ namespace Aba.Silverlight.WP8.OsMo.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to U33_Kqrt52pN.
+        ///   Looks up a localized string similar to Groups.
         /// </summary>
-        public static string MessengerApplicationId {
+        public static string GroupsTabTitle {
             get {
-                return ResourceManager.GetString("MessengerApplicationId", resourceCulture);
+                return ResourceManager.GetString("GroupsTabTitle", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to https://api.osmo.mobi.
+        ///   Looks up a localized string similar to Login.
         /// </summary>
-        public static string MessengerHost {
+        public static string LoginTabTitle {
             get {
-                return ResourceManager.GetString("MessengerHost", resourceCulture);
+                return ResourceManager.GetString("LoginTabTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Map.
+        /// </summary>
+        public static string MapTabTitle {
+            get {
+                return ResourceManager.GetString("MapTabTitle", resourceCulture);
             }
         }
         
@@ -115,29 +106,11 @@ namespace Aba.Silverlight.WP8.OsMo.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to en-US.
+        ///   Looks up a localized string similar to en.
         /// </summary>
         public static string ResourceLanguage {
             get {
                 return ResourceManager.GetString("ResourceLanguage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Sample Runtime Property Value.
-        /// </summary>
-        public static string SampleProperty {
-            get {
-                return ResourceManager.GetString("SampleProperty", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Service.
-        /// </summary>
-        public static string ServiceTabTitle {
-            get {
-                return ResourceManager.GetString("ServiceTabTitle", resourceCulture);
             }
         }
         
@@ -147,6 +120,60 @@ namespace Aba.Silverlight.WP8.OsMo.Resources {
         public static string SettingsTabTitle {
             get {
                 return ResourceManager.GetString("SettingsTabTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Message of the day.
+        /// </summary>
+        public static string TrackingMotd {
+            get {
+                return ResourceManager.GetString("TrackingMotd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Send crash reports.
+        /// </summary>
+        public static string TrackingSendReports {
+            get {
+                return ResourceManager.GetString("TrackingSendReports", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Service started.
+        /// </summary>
+        public static string TrackingServiceStarted {
+            get {
+                return ResourceManager.GetString("TrackingServiceStarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Service stopped.
+        /// </summary>
+        public static string TrackingServiceStopped {
+            get {
+                return ResourceManager.GetString("TrackingServiceStopped", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start.
+        /// </summary>
+        public static string TrackingStart {
+            get {
+                return ResourceManager.GetString("TrackingStart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stop.
+        /// </summary>
+        public static string TrackingStop {
+            get {
+                return ResourceManager.GetString("TrackingStop", resourceCulture);
             }
         }
         

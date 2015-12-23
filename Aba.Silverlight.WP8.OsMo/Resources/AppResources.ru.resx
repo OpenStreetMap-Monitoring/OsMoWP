@@ -122,43 +122,40 @@
     <comment>Controls the FlowDirection for all elements in the RootFrame. Set to the traditional direction of this resource file's language</comment>
   </data>
   <data name="ResourceLanguage" xml:space="preserve">
-    <value>en</value>
+    <value>ru</value>
     <comment>Controls the Language and ensures that the font for all elements in the RootFrame aligns with the app's language. Set to the language code of this resource file's language.</comment>
   </data>
   <data name="ApplicationTitle" xml:space="preserve">
     <value>OsMo</value>
   </data>
   <data name="SettingsTabTitle" xml:space="preserve">
-    <value>Settings</value>
+    <value>Настройки</value>
   </data>
   <data name="TrackingTabTitle" xml:space="preserve">
-    <value>Tracking</value>
+    <value>Мониторинг</value>
   </data>
   <data name="GroupsTabTitle" xml:space="preserve">
-    <value>Groups</value>
+    <value>Группы</value>
   </data>
   <data name="LoginTabTitle" xml:space="preserve">
-    <value>Login</value>
+    <value>Логин</value>
   </data>
   <data name="TrackingMotd" xml:space="preserve">
-    <value>Message of the day</value>
+    <value>Послание дня</value>
   </data>
   <data name="TrackingSendReports" xml:space="preserve">
-    <value>Send crash reports</value>
+    <value>Отправить отчёты</value>
   </data>
   <data name="TrackingServiceStarted" xml:space="preserve">
-    <value>Service started</value>
+    <value>Мониторинг запущен</value>
   </data>
   <data name="TrackingServiceStopped" xml:space="preserve">
-    <value>Service stopped</value>
+    <value>Мониторинг остановлен</value>
   </data>
   <data name="TrackingStart" xml:space="preserve">
-    <value>Start</value>
+    <value>Запустить</value>
   </data>
   <data name="TrackingStop" xml:space="preserve">
-    <value>Stop</value>
-  </data>
-  <data name="MapTabTitle" xml:space="preserve">
-    <value>Map</value>
+    <value>Остановить</value>
   </data>
 </root>

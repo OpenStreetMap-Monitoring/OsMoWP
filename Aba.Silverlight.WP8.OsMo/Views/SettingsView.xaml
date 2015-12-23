@@ -16,6 +16,8 @@
 		<TextBox Text="{Binding MovementThreshold,Mode=TwoWay}"/>
 		<TextBlock Text="Desired Accuracy (10-100 m):"/>
 		<TextBox Text="{Binding DesiredAccuracyInMeters,Mode=TwoWay}"/>
+		<TextBlock Text="Peristent connection:"/>
+		<CheckBox IsChecked="{Binding PersistentConnection,Mode=TwoWay}"/>
 		<TextBlock Text="Debug Tab Enabled:"/>
 		<CheckBox IsChecked="{Binding DebugViewEnabled,Mode=TwoWay}"/>
 	</StackPanel>
