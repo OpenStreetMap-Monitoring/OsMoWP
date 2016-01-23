@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Threading;
 using Windows.Phone.System.Analytics;
+using System.Linq;
 
 namespace Aba.Silverlight.WP8.OsMo
 {
@@ -35,9 +36,11 @@ namespace Aba.Silverlight.WP8.OsMo
 		private int Serial { get; set; }
 		private Queue<Message> SendQueue { get; set; }
 		private DispatcherTimer Pinger { get; set; }
+		private byte[] Buffer { get; set; }
 
 		public Messenger()
 		{
+			Buffer = new byte[0];
 			ServiceHost = MESSENGER_HOST;
 			ApplicationId = WebUtility.UrlEncode(MESSENGER_APPLICATION_ID);
 			DeviceId = WebUtility.UrlEncode(HostInformation.PublisherHostId);
@@ -68,7 +71,11 @@ namespace Aba.Silverlight.WP8.OsMo
 			}
 			else
 			{
-				RegisterDevice(() => { GetToken(() => { Init(); }); });
+				RegisterDevice(() =>
+				{
+					//TODO: show login tab on main page
+					GetToken(() => { Init(); });
+				});
 			}
 		}
 
@@ -109,17 +116,18 @@ namespace Aba.Silverlight.WP8.OsMo
 
 		private void RegisterDevice(Action Success)
 		{
-			if (IsolatedStorageSettings.ApplicationSettings.Contains(SERVER_DEVICE_ID)) return;
+			var iss = IsolatedStorageSettings.ApplicationSettings;
+			if (iss.Contains(SERVER_DEVICE_ID)) return;
 			var client = new WebClient();
 			client.DownloadStringCompleted += (s, e) =>
 			{
 				if (e.Error == null)
 				{
 					var device = Regex.Match(e.Result, "[\"]device[\"][:][\"]([^\"]+)[\"]").Groups[1].Value;
-					lock (IsolatedStorageSettings.ApplicationSettings)
+					lock (iss)
 					{
-						IsolatedStorageSettings.ApplicationSettings[SERVER_DEVICE_ID] = WebUtility.UrlEncode(device);
-						IsolatedStorageSettings.ApplicationSettings.Save();
+						iss[SERVER_DEVICE_ID] = WebUtility.UrlEncode(device);
+						iss.Save();
 					}
 					Success();
 				}
@@ -181,7 +189,26 @@ namespace Aba.Silverlight.WP8.OsMo
 				Disconnect();
 				return;
 			}
-			ProcessReply(Encoding.UTF8.GetString(e.Buffer, 0, e.BytesTransferred));
+			string[] lines = new string[0];
+			lock (Buffer)
+			{
+				var pack = Buffer.Concat(e.Buffer.Take(e.BytesTransferred)).ToArray();
+				var i = pack.Length - 1;
+				while (i >= 0 && pack[i] != 10) i--;
+				if (i < 0)
+				{
+					Buffer = pack;
+				}
+				else
+				{
+					Buffer = pack.Skip(i + 1).ToArray();
+					lines = Encoding.UTF8.GetString(pack, 0, i).Split('\n');
+				}
+			}
+			foreach (var line in lines)
+			{
+				ProcessReply(line);
+			}
 			e.Completed -= Transport_Received;
 			e.Dispose();
 			if (!Transport.Connected)

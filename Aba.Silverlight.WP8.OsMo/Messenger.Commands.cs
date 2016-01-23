@@ -20,7 +20,7 @@ namespace Aba.Silverlight.WP8.OsMo
 		{
 			App.ViewModel.AddDebugLog(string.Format("<{0}", line));
 			var pattern = "^([A-Z]+)([:][A-Z0-9_]+)?(|.+)?$";
-			var match = Regex.Match(line.Trim(), pattern);
+			var match = Regex.Match(line, pattern);
 			if (match.Success)
 			{
 				var command = match.Groups[1].Value;
@@ -37,6 +37,10 @@ namespace Aba.Silverlight.WP8.OsMo
 						Transport.Close();
 						break;
 					case "G":
+						foreach (var c in (json as JArray).Cast<JValue>().Select(s => s.Value.ToString().Split('|')).ToList())
+						{
+							Do(() => { App.ViewModel.GroupsModel.AddCoordinate(c[0], Coordinate.Create(c[1])); });
+						}
 						break;
 					case "GA":
 						CGroup();
@@ -48,12 +52,14 @@ namespace Aba.Silverlight.WP8.OsMo
 						CGroup();
 						break;
 					case "GP":
+						var group = JsonConvert.DeserializeObject<Group>(addict);
+						Do(() => { App.ViewModel.GroupsModel.SetUsers(parameter, group.Users); });
 						CGpr(parameter);
 						break;
 					case "GPR":
 						break;
 					case "GROUP":
-						Do(() => { App.ViewModel.GroupsModel.Groups = JsonConvert.DeserializeObject<IEnumerable<Group>>(addict); });
+						Do(() => { lock (App.ViewModel.GroupsModel.Groups) { App.ViewModel.GroupsModel.Groups = JsonConvert.DeserializeObject<List<Group>>(addict); } });
 						break;
 					case "INIT":
 						if (json["error"] != null)

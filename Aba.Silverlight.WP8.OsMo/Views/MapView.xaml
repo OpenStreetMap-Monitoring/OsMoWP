@@ -11,15 +11,65 @@
 	d:DesignHeight="600" d:DesignWidth="480">
 	<UserControl.Resources>
 		<DataTemplate x:Key="MeTemplate">
-			<Grid>
-				<Ellipse Width="50" Height="50" Stroke="Green" StrokeThickness="3" Fill="GreenYellow"
+			<Grid Margin="-25 -45 0 0">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+				<TextBlock Text="{Binding Name}" Foreground="Black" HorizontalAlignment="Center" />
+				<Ellipse Width="50" Height="50"
+								 Grid.Row="1"
+								 Stroke="{Binding Stroke}" StrokeThickness="3" Fill="{Binding Fill}"
 								 HorizontalAlignment="Center"
 								 VerticalAlignment="Center"
 								 />
-				<TextBlock Text="{Binding .}" Foreground="Black"
+				<TextBlock Text="{Binding Speed}" Foreground="Black"
+									 Grid.Row="1"
 									 HorizontalAlignment="Center"
 									 VerticalAlignment="Center"
 									 />
+				<Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+								Grid.Row="1"
+								Click="UserPushpin_Click"
+								DataContext="{Binding U}"
+								>
+					<Button.Template>
+						<ControlTemplate>
+							<Grid Background="Transparent"/>
+						</ControlTemplate>
+					</Button.Template>
+				</Button>
+			</Grid>
+		</DataTemplate>
+		<DataTemplate x:Key="UserTemplate">
+			<Grid Margin="-25 -45 0 0">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+				<TextBlock Text="{Binding Name}" Foreground="Black" HorizontalAlignment="Center" />
+				<Ellipse Width="50" Height="50"
+								 Grid.Row="1"
+								 Stroke="{Binding Stroke}" StrokeThickness="3" Fill="{Binding Fill}"
+								 HorizontalAlignment="Center"
+								 VerticalAlignment="Center"
+								 />
+				<TextBlock Text="{Binding Speed}" Foreground="Black"
+									 HorizontalAlignment="Center"
+									 VerticalAlignment="Center"
+									 Grid.Row="1"
+									 />
+				<Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+								Grid.Row="1"
+								Click="UserPushpin_Click"
+								DataContext="{Binding U}"
+								>
+					<Button.Template>
+						<ControlTemplate>
+							<Grid Background="Transparent"/>
+						</ControlTemplate>
+					</Button.Template>
+				</Button>
 			</Grid>
 		</DataTemplate>
 	</UserControl.Resources>

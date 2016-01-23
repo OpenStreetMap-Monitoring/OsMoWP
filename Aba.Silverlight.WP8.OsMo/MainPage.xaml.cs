@@ -22,6 +22,7 @@ namespace Aba.Silverlight.WP8.OsMo
 {
 	public partial class MainPage : PhoneApplicationPage
 	{
+		private int _LoginTabPosition;
 
 		public MainPage()
 		{
@@ -32,13 +33,17 @@ namespace Aba.Silverlight.WP8.OsMo
 		protected override void OnNavigatedTo(NavigationEventArgs e)
 		{
 			(App.Current as App).Page = this;
+#if DEBUG
+			App.ViewModel.SettingsModel.DebugViewEnabled = true;
+#endif
 			var iss = IsolatedStorageSettings.ApplicationSettings;
 			if (iss.Contains(Messenger.SERVER_DEVICE_ID) && !iss.Contains(Messenger.SERVER_USER_KEY))
 			{
-				LoginBrowser.Source = new Uri(string.Format("https://osmo.mobi/signin?type=m&key={0}", IsolatedStorageSettings.ApplicationSettings[Messenger.SERVER_DEVICE_ID]));
+				LoginBrowser.Source = new Uri(string.Format("https://osmo.mobi/signin?type=m&key={0}", iss[Messenger.SERVER_DEVICE_ID]));
 			}
 			else
 			{
+				_LoginTabPosition = Pivot.Items.IndexOf(LoginTab);
 				Pivot.Items.Remove(LoginTab);
 			}
 		}
@@ -70,10 +75,6 @@ namespace Aba.Silverlight.WP8.OsMo
 
 		private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			if (Pivot.SelectedItem == GroupsTab && App.ViewModel.GroupsModel.Groups == null)
-			{
-				App.Messenger.CGroup();
-			}
 
 			if (Pivot.SelectedItem == MapTab)
 			{
@@ -144,8 +145,10 @@ namespace Aba.Silverlight.WP8.OsMo
 				{
 					IsolatedStorageSettings.ApplicationSettings[Messenger.SERVER_USER_KEY] = match.Groups[2].Value;
 					IsolatedStorageSettings.ApplicationSettings.Save();
-					Pivot.Items.Remove(LoginTab);
 				}
+				Pivot.Items.Remove(LoginTab);
+				App.Messenger.Disconnect();
+				App.Messenger.Connect();
 			}
 		}
 

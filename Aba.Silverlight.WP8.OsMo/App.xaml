@@ -13,6 +13,7 @@
 		<conv:VisibilityConverter x:Key="Visible"/>
 		<conv:BoolConverter x:Key="Bool" />
 		<conv:CoordinateConverter x:Key="Coordinate" />
+		<conv:PushpinMarginConverter x:Key="PushpinMargin" />
 	</Application.Resources>
 
 	<Application.ApplicationLifetimeObjects>

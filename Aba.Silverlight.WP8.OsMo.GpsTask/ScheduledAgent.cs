@@ -28,13 +28,6 @@ namespace Aba.Silverlight.WP8.OsMo.GpsTask
 
 		protected override void OnInvoke(ScheduledTask task)
 		{
-#if DEBUG
-			ScheduledActionService.LaunchForTest(task.Name, new TimeSpan(0, 0, 5));
-			ShellToast toast = new ShellToast();
-			toast.Title = "t";
-			toast.Content = "tt";
-			toast.Show();
-#endif
 			NotifyComplete();
 		}
 	}

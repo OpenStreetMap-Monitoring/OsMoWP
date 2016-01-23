@@ -84,7 +84,7 @@ namespace Aba.Silverlight.WP8.OsMo.ViewModels
 		public SettingsModel()
 		{
 			if (ReportInterval == null) ReportInterval = 1000;
-			if (MovementThreshold == null) MovementThreshold = 1;
+			if (MovementThreshold == null) MovementThreshold = 0;
 			if (DesiredAccuracyInMeters == null) DesiredAccuracyInMeters = 10;
 			if (DebugViewEnabled == null) DebugViewEnabled = false;
 			if (PersistentConnection == null) PersistentConnection = false;

@@ -67,7 +67,13 @@ namespace Aba.Silverlight.WP8.OsMo
 		private void Application_Launching(object sender, LaunchingEventArgs e)
 		{
 			ViewModel.SettingsModel.PropertyChanged += SettingsModel_PropertyChanged;
-			Messenger.Connect();
+			App.Messenger.CGroup();
+#if DEBUG
+			var iss = IsolatedStorageSettings.ApplicationSettings;
+			if (!iss.Contains(Messenger.SERVER_DEVICE_ID)) iss[Messenger.SERVER_DEVICE_ID] = "1e3rm2UN7fbQZcAqmMCFRZfkDMRX6GQ7jGMJc9RBhcctYQnJa1EXmUGWHQG2IDov";
+			if (!iss.Contains(Messenger.SERVER_USER_KEY)) iss[Messenger.SERVER_USER_KEY] = "iQPu0Kn1TJeXaVe5dbLeDYdvDfSTdJEXdgJtmL31H4";
+			iss.Save();
+#endif
 		}
 
 		void SettingsModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -90,7 +96,6 @@ namespace Aba.Silverlight.WP8.OsMo
 			switch (e.PropertyName)
 			{
 				case "DebugViewEnabled":
-					var debugLogEnabled = ViewModel.SettingsModel.DebugViewEnabled;
 					Page.CheckDebugTab();
 					break;
 			}
