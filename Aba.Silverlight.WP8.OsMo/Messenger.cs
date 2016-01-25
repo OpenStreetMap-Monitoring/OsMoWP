@@ -110,8 +110,10 @@ namespace Aba.Silverlight.WP8.OsMo
 					Disconnect();
 				}
 			};
-			client.DownloadStringAsync(new Uri(string.Format("{0}/init?app={1}&device={2}&serial={3}{4}", ServiceHost, ApplicationId
-				, iss[SERVER_DEVICE_ID], Serial++, iss.Contains(SERVER_USER_KEY) ? string.Format("&user={0}", iss[SERVER_USER_KEY]) : null)));
+			var url = string.Format("{0}/init?app={1}&device={2}&serial={3}{4}", ServiceHost, ApplicationId
+				, iss[SERVER_DEVICE_ID], Serial++, iss.Contains(SERVER_USER_KEY) ? string.Format("&user={0}", iss[SERVER_USER_KEY]) : null);
+			client.DownloadStringAsync(new Uri(url));
+			App.ViewModel.AddDebugLog(string.Format(">{0}", url));
 		}
 
 		private void RegisterDevice(Action Success)
@@ -124,6 +126,7 @@ namespace Aba.Silverlight.WP8.OsMo
 				if (e.Error == null)
 				{
 					var device = Regex.Match(e.Result, "[\"]device[\"][:][\"]([^\"]+)[\"]").Groups[1].Value;
+
 					lock (iss)
 					{
 						iss[SERVER_DEVICE_ID] = WebUtility.UrlEncode(device);
@@ -136,7 +139,9 @@ namespace Aba.Silverlight.WP8.OsMo
 					Disconnect();
 				}
 			};
-			client.DownloadStringAsync(new Uri(string.Format("{0}/new?app={1}&id={2}&imei={3}&platform={4}", ServiceHost, ApplicationId, DeviceId, 0, PlatformInfo)));
+			var url = string.Format("{0}/new?app={1}&id={2}&imei={3}&platform={4}", ServiceHost, ApplicationId, DeviceId, 0, PlatformInfo);
+			client.DownloadStringAsync(new Uri(url));
+			App.ViewModel.AddDebugLog(string.Format(">{0}", url));
 		}
 
 		private void Init()

@@ -95,10 +95,13 @@ namespace Aba.Silverlight.WP8.OsMo
 
 		private void SendReportsButton_Click(object sender, RoutedEventArgs e)
 		{
+			var button = sender as Button;
+			button.IsEnabled = false;
 			var body = new StringBuilder();
 			body.AppendFormat("{0}\r\n", System.Reflection.Assembly.GetExecutingAssembly().FullName);
 			var iss = IsolatedStorageFile.GetUserStoreForApplication();
-			foreach (var name in App.ViewModel.CrashReports)
+			var crashList = App.ViewModel.CrashReports;
+			foreach (var name in crashList)
 			{
 				try
 				{
@@ -114,20 +117,29 @@ namespace Aba.Silverlight.WP8.OsMo
 					(App.Current as App).Crash(ex);
 				}
 			}
-			var email = new EmailComposeTask { To = "abaland@gmail.com", Bcc = "support@osmo.mobi", Subject = "WP8 crash reports", Body = body.ToString() };
-			email.Show();
-			foreach (var file in App.ViewModel.CrashReports)
+			//var email = new EmailComposeTask { To = "abaland@gmail.com", Bcc = "support@osmo.mobi", Subject = "WP8 crash reports", Body = body.ToString() };
+			//email.Show();
+			var client = new WebClient();
+			client.UploadStringCompleted += (se, ev) =>
 			{
-				try
+				if (ev.Result == "1")
 				{
-					iss.DeleteFile(file);
+					foreach (var file in ev.UserState as List<string>)
+					{
+						try
+						{
+							iss.DeleteFile(file);
+						}
+						catch (Exception ex)
+						{
+							(App.Current as App).Crash(ex);
+						}
+					}
 				}
-				catch (Exception ex)
-				{
-					(App.Current as App).Crash(ex);
-				}
-			}
-			App.ViewModel.CrashReports = null;
+				button.IsEnabled = true;
+				App.ViewModel.CrashReports = null;
+			};
+			client.UploadStringAsync(new Uri("http://seventhside.org/Debug/Upload"), "POST", body.ToString(), crashList);
 		}
 
 		private void SaveLogButton_Click(object sender, RoutedEventArgs e)
