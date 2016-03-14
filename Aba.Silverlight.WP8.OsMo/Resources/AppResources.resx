@@ -161,4 +161,10 @@
   <data name="MapTabTitle" xml:space="preserve">
     <value>Map</value>
   </data>
+  <data name="DebugTabTitle" xml:space="preserve">
+    <value>Debug</value>
+  </data>
+  <data name="LogoffButton" xml:space="preserve">
+    <value>Logoff</value>
+  </data>
 </root>

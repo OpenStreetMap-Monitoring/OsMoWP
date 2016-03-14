@@ -49,11 +49,11 @@ namespace Aba.Silverlight.WP8.OsMo.Views
 			checkbox.IsEnabled = false;
 			if (checkbox.IsChecked.GetValueOrDefault())
 			{
-				App.Messenger.CGa(item.Id);
+				App.Messenger.CGa(item.U);
 			}
 			else
 			{
-				App.Messenger.CGd(item.Id);
+				App.Messenger.CGd(item.U);
 			}
 		}
 	}

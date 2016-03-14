@@ -158,4 +158,13 @@
   <data name="TrackingStop" xml:space="preserve">
     <value>Остановить</value>
   </data>
+  <data name="DebugTabTitle" xml:space="preserve">
+    <value>Отладка</value>
+  </data>
+  <data name="MapTabTitle" xml:space="preserve">
+    <value>Карта</value>
+  </data>
+  <data name="LogoffButton" xml:space="preserve">
+    <value>Выйти</value>
+  </data>
 </root>

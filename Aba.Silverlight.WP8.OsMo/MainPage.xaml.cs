@@ -23,28 +23,77 @@ namespace Aba.Silverlight.WP8.OsMo
 	public partial class MainPage : PhoneApplicationPage
 	{
 		private int _LoginTabPosition;
+		private ApplicationBarMenuItem DebugMenuItem { get; set; }
 
 		public MainPage()
 		{
+			(App.Current as App).Page = this;
 			InitializeComponent();
 			DataContext = App.ViewModel;
+
+			ApplicationBar = new ApplicationBar();
+
+			ApplicationBar.Buttons.Add(new ApplicationBarIconButton
+			{
+				IconUri = new Uri("/Assets/AppBar/appbar.tracking.png", UriKind.Relative),
+				Text = AppResources.TrackingTabTitle
+			});
+
+			ApplicationBar.Buttons.Add(new ApplicationBarIconButton
+			{
+				IconUri = new Uri("/Assets/AppBar/appbar.map.png", UriKind.Relative),
+				Text = AppResources.MapTabTitle
+			});
+
+			ApplicationBar.Buttons.Add(new ApplicationBarIconButton
+			{
+				IconUri = new Uri("/Assets/AppBar/appbar.group.png", UriKind.Relative),
+				Text = AppResources.GroupsTabTitle
+			});
+
+			ApplicationBar.Buttons.Add(new ApplicationBarIconButton
+			{
+				IconUri = new Uri("/Assets/AppBar/appbar.settings.png", UriKind.Relative),
+				Text = AppResources.SettingsTabTitle
+			});
+
+			foreach (ApplicationBarIconButton b in ApplicationBar.Buttons) b.Click += AppBarButton_Click;
+
+			ApplicationBar.MenuItems.Add(new ApplicationBarMenuItem(AppResources.TrackingTabTitle));
+			ApplicationBar.MenuItems.Add(new ApplicationBarMenuItem(AppResources.MapTabTitle));
+			ApplicationBar.MenuItems.Add(new ApplicationBarMenuItem(AppResources.GroupsTabTitle));
+			ApplicationBar.MenuItems.Add(new ApplicationBarMenuItem(AppResources.LoginTabTitle));
+			ApplicationBar.MenuItems.Add(new ApplicationBarMenuItem(AppResources.SettingsTabTitle));
+			foreach (ApplicationBarMenuItem i in ApplicationBar.MenuItems) i.Click += AppBarMenuItem_Click;
+
+			DebugMenuItem = new ApplicationBarMenuItem(AppResources.DebugTabTitle);
+			DebugMenuItem.Click += AppBarMenuItem_Click;
+
+			if(App.ViewModel.SettingsModel.DebugViewEnabled.Value)
+			{
+				ApplicationBar.MenuItems.Add(DebugMenuItem);
+			}
 		}
 
 		protected override void OnNavigatedTo(NavigationEventArgs e)
 		{
-			(App.Current as App).Page = this;
 #if DEBUG
 			App.ViewModel.SettingsModel.DebugViewEnabled = true;
 #endif
+			CheckLoginTab();
+		}
+
+		public void CheckLoginTab()
+		{
 			var iss = IsolatedStorageSettings.ApplicationSettings;
 			if (iss.Contains(Messenger.SERVER_DEVICE_ID) && !iss.Contains(Messenger.SERVER_USER_KEY))
 			{
+				App.ViewModel.IsLoginVisible = true;
 				LoginBrowser.Source = new Uri(string.Format("https://osmo.mobi/signin?type=m&key={0}", iss[Messenger.SERVER_DEVICE_ID]));
 			}
 			else
 			{
-				_LoginTabPosition = Pivot.Items.IndexOf(LoginTab);
-				Pivot.Items.Remove(LoginTab);
+				App.ViewModel.IsLoginVisible = false;
 			}
 		}
 
@@ -66,11 +115,31 @@ namespace Aba.Silverlight.WP8.OsMo
 			if (App.ViewModel.SettingsModel.DebugViewEnabled.Value && !Pivot.Items.Contains(DebugTab))
 			{
 				Pivot.Items.Add(DebugTab);
+				ApplicationBar.MenuItems.Add(DebugMenuItem);
 			}
 			else if (!App.ViewModel.SettingsModel.DebugViewEnabled.Value && Pivot.Items.Contains(DebugTab))
 			{
 				Pivot.Items.Remove(DebugTab);
+				ApplicationBar.MenuItems.Remove(DebugMenuItem);
 			}
+		}
+
+		private void SwitchTab(string title)
+		{
+			var switchTo = Pivot.Items.OfType<PivotItem>().FirstOrDefault(f => f.Header.ToString() == title);
+			if (switchTo != null) Pivot.SelectedItem = switchTo;
+		}
+
+		private void AppBarButton_Click(object sender, EventArgs e)
+		{
+			var button = sender as ApplicationBarIconButton;
+			SwitchTab(button.Text);
+		}
+
+		private void AppBarMenuItem_Click(object sender, EventArgs e)
+		{
+			var mi = sender as ApplicationBarMenuItem;
+			SwitchTab(mi.Text);
 		}
 
 		private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -117,8 +186,6 @@ namespace Aba.Silverlight.WP8.OsMo
 					(App.Current as App).Crash(ex);
 				}
 			}
-			//var email = new EmailComposeTask { To = "abaland@gmail.com", Bcc = "support@osmo.mobi", Subject = "WP8 crash reports", Body = body.ToString() };
-			//email.Show();
 			var client = new WebClient();
 			client.UploadStringCompleted += (se, ev) =>
 			{
@@ -158,10 +225,19 @@ namespace Aba.Silverlight.WP8.OsMo
 					IsolatedStorageSettings.ApplicationSettings[Messenger.SERVER_USER_KEY] = match.Groups[2].Value;
 					IsolatedStorageSettings.ApplicationSettings.Save();
 				}
-				Pivot.Items.Remove(LoginTab);
+				App.ViewModel.IsLoginVisible = false;
 				App.Messenger.Disconnect();
-				App.Messenger.Connect();
+				App.Messenger.CGroup();
 			}
+		}
+
+		private void LogoffButton_Click(object sender, RoutedEventArgs e)
+		{
+			IsolatedStorageSettings.ApplicationSettings.Remove(Messenger.SERVER_USER_KEY);
+			IsolatedStorageSettings.ApplicationSettings.Save();
+			App.Messenger.Disconnect();
+			App.Messenger.CGroup();
+			CheckLoginTab();
 		}
 
 	}

@@ -14,18 +14,23 @@
 	SupportedOrientations="Portrait"  Orientation="Portrait"
 	shell:SystemTray.IsVisible="True">
 	<Grid x:Name="LayoutRoot" Background="Transparent">
-		<phone:Pivot Title="{Binding .}"
-								 SelectionChanged="Pivot_SelectionChanged"
-								 x:Name="Pivot">
-			<phone:Pivot.TitleTemplate>
-				<DataTemplate>
-					<StackPanel Orientation="Horizontal">
-						<TextBlock Text="{Binding Path=LocalizedResources.ApplicationTitle, Source={StaticResource LocalizedStrings}}"/>
-						<TextBlock Text="{Binding MessengerStatus}" Margin="10 0 0 0"/>
-					</StackPanel>
-				</DataTemplate>
-			</phone:Pivot.TitleTemplate>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+		<StackPanel Grid.Row="0" Orientation="Horizontal">
+			<TextBlock Text="{Binding Path=LocalizedResources.ApplicationTitle, Source={StaticResource LocalizedStrings}}"
+								 Margin="10 0 0 0"
+								 />
+			<TextBlock Text="{Binding MessengerStatus}" Margin="10 0 0 0"/>
+		</StackPanel>
 
+		<phone:Pivot Grid.Row="1" x:Name="Pivot">
+			<phone:Pivot.HeaderTemplate>
+				<DataTemplate>
+					<TextBlock FontSize="36" FontWeight="SemiBold" Text="{Binding .}" Height="Auto" />
+				</DataTemplate>
+			</phone:Pivot.HeaderTemplate>
 			<!-- Tracking Tab-->
 			<phone:PivotItem Header="{Binding Path=LocalizedResources.TrackingTabTitle, Source={StaticResource LocalizedStrings}}">
 				<ScrollViewer>
@@ -103,9 +108,15 @@
 			</phone:PivotItem>
 
 			<!-- Login Tab-->
-			<phone:PivotItem Header="{Binding Path=LocalizedResources.LoginTabTitle, Source={StaticResource LocalizedStrings}}" 
-											 x:Name="LoginTab">
-				<phone:WebBrowser x:Name="LoginBrowser" Navigated="LoginBrowser_Navigated" />
+			<phone:PivotItem Header="{Binding Path=LocalizedResources.LoginTabTitle, Source={StaticResource LocalizedStrings}}">
+				<Grid>
+					<Button Content="{Binding Path=LocalizedResources.LogoffButton, Source={StaticResource LocalizedStrings}}"
+									HorizontalAlignment="Stretch"
+									VerticalAlignment="Top"
+									Visibility="{Binding IsLoginVisible, Converter={StaticResource Visible},ConverterParameter=Inverse}" 
+									Click="LogoffButton_Click" />
+					<phone:WebBrowser x:Name="LoginBrowser" Navigated="LoginBrowser_Navigated" Visibility="{Binding IsLoginVisible, Converter={StaticResource Visible}}" />
+				</Grid>
 			</phone:PivotItem>
 
 			<!-- Settings Tab-->

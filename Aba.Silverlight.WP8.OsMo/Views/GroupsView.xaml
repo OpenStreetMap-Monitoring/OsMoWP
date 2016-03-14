@@ -42,7 +42,7 @@
 			</Grid.ColumnDefinitions>
 			<TextBox x:Name="GroupName" Grid.Column="0" />
 			<TextBlock Visibility="{Binding ElementName=GroupName,Path=Text,Converter={StaticResource Visible},ConverterParameter=Inverse}"
-								 Text="Group Name"
+								 Text="Group ID"
 								 Grid.Column="0"
 								 IsHitTestVisible="False"
 								 HorizontalAlignment="Center"
@@ -51,7 +51,7 @@
 								 />
 			<TextBox x:Name="DisplayName" Grid.Column="1" />
 			<TextBlock Visibility="{Binding ElementName=GroupName,Path=Text,Converter={StaticResource Visible},ConverterParameter=Inverse}"
-								 Text="Display Name"
+								 Text="Nick"
 								 Grid.Column="1"
 								 IsHitTestVisible="False"
 								 HorizontalAlignment="Center"

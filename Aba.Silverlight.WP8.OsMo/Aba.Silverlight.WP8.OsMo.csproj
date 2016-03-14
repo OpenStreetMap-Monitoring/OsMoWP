@@ -157,6 +157,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\AppBar\appbar.group.png" />
+    <Content Include="Assets\AppBar\appbar.map.png" />
+    <Content Include="Assets\AppBar\appbar.settings.png" />
+    <Content Include="Assets\AppBar\appbar.tracking.png" />
     <Content Include="Assets\osmo-app-icon-100.png" />
     <None Include="Assets\osmo-app-icon-300.png" />
     <None Include="Assets\Screenshots\osmo-screenshot-wvga-1.png" />
@@ -184,6 +188,7 @@
       <Name>Aba.Silverlight.WP8.OsMo.GpsTask</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).$(TargetFrameworkVersion).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

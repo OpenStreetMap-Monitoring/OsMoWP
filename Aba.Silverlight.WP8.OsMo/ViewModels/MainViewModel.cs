@@ -27,6 +27,9 @@ namespace Aba.Silverlight.WP8.OsMo.ViewModels
 		private bool _IsMapVisible = false;
 		public bool IsMapVisible { get { return _IsMapVisible; } set { if (value != _IsMapVisible) { _IsMapVisible = value; NotifyPropertyChanged(); } } }
 
+		private bool _IsLoginVisible = false;
+		public bool IsLoginVisible { get { return _IsLoginVisible; } set { if (value != _IsLoginVisible) { _IsLoginVisible = value; NotifyPropertyChanged(); } } }
+
 		private Coordinate _Coordinate;
 		public Coordinate Coordinate { get { return _Coordinate; } set { if (value != _Coordinate) { _Coordinate = value; NotifyPropertyChanged(); } } }
 

@@ -73,7 +73,7 @@ namespace Aba.Silverlight.WP8.OsMo
 			{
 				RegisterDevice(() =>
 				{
-					//TODO: show login tab on main page
+					Do(() => { ((App.Current as App).Page as MainPage).CheckLoginTab(); });
 					GetToken(() => { Init(); });
 				});
 			}
@@ -86,6 +86,11 @@ namespace Aba.Silverlight.WP8.OsMo
 			{
 				CBye();
 			}
+			if (Transport != null)
+			{
+				Transport.Close();
+			}
+			Transport = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 			Status = ConnectionStatus.NotConnected;
 			App.ViewModel.AddDebugLog("!Disconnected");
 		}

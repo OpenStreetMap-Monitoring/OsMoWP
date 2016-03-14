@@ -70,6 +70,15 @@ namespace Aba.Silverlight.WP8.OsMo.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Debug.
+        /// </summary>
+        public static string DebugTabTitle {
+            get {
+                return ResourceManager.GetString("DebugTabTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Groups.
         /// </summary>
         public static string GroupsTabTitle {
@@ -84,6 +93,15 @@ namespace Aba.Silverlight.WP8.OsMo.Resources {
         public static string LoginTabTitle {
             get {
                 return ResourceManager.GetString("LoginTabTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Logoff.
+        /// </summary>
+        public static string LogoffButton {
+            get {
+                return ResourceManager.GetString("LogoffButton", resourceCulture);
             }
         }
         
